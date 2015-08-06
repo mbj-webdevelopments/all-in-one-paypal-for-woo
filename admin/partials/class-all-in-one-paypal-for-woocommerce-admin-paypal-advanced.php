@@ -19,7 +19,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
         $this->home_url = is_ssl() ? home_url('/', 'https') : home_url('/');
         $this->testurl = 'https://pilot-payflowpro.paypal.com';
         $this->liveurl = 'https://payflowpro.paypal.com';
-        $this->relay_response_url = add_query_arg('wc-api', 'All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced', $this->home_url);
+        $this->paypal_advance_return_response_url = add_query_arg('wc-api', 'All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced', $this->home_url);
         $this->method_title = __('PayPal Advanced', 'all-in-one-paypal-for-woocommerce');
         $this->secure_token_id = '';
         $this->securetoken = '';
@@ -56,10 +56,10 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
         if ($this->debug == 'yes') {
             $this->log = new WC_Logger();
         }
-        add_action('admin_notices', array($this, 'checks'));
+        add_action('admin_notices', array($this, 'check_required_field'));
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-        add_action('woocommerce_receipt_paypal_advanced', array($this, 'receipt_page'));
-        add_action('woocommerce_api_all_in_one_paypal_for_woocommerce_admin_paypal_advanced', array($this, 'relay_response'));
+        add_action('woocommerce_receipt_paypal_advanced', array($this, 'paypal_advance_receipt_page'));
+        add_action('woocommerce_api_all_in_one_paypal_for_woocommerce_admin_paypal_advanced', array($this, 'paypal_advance_return_response'));
         if (!$this->is_available()) {
             $this->enabled = false;
         }
@@ -68,16 +68,16 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function checks() {
+    public function check_required_field() {
         if ($this->enabled == 'no') {
             return;
         }
         if (!$this->loginid) {
-            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced error: Please enter your PayPal Advanced Account Merchant Login <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
+            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced : Enter your PayPal Advanced Account Merchant Login <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
         } elseif (!$this->resellerid) {
-            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced error: Please enter your PayPal Advanced Account Partner <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
+            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced : Enter your PayPal Advanced Account Partner <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
         } elseif (!$this->password) {
-            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced error: Please enter your PayPal Advanced Account Password <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
+            echo '<div class="error"><p>' . sprintf(__('Paypal Advanced : Enter your PayPal Advanced Account Password <a href="%s">here</a>', 'all-in-one-paypal-for-woocommerce'), admin_url('admin.php?page=wc-settings&tab=checkout&section=' . strtolower('All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced'))) . '</p></div>';
         }
         return;
     }
@@ -85,7 +85,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function redirect_to($redirect_url) {
+    public function paypal_advance_url_redirect($redirect_url) {
         @ob_clean();
         header('HTTP/1.1 200 OK');
         if ($this->layout != 'MINLAYOUT') {
@@ -99,8 +99,8 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function relay_response() {
-        $not_silentreq_debug = ($this->debug == 'yes' && !isset($_REQUEST['silent'])) ? true : false;
+    public function paypal_advance_return_response() {
+        $paypal_advance_silent_debug = ($this->debug == 'yes' && !isset($_REQUEST['silent'])) ? true : false;
         if (!isset($_REQUEST['INVOICE'])) {
             wp_redirect(home_url('/'));
             exit;
@@ -120,16 +120,16 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                 $this->log(__('Relay Response Tokens Match', 'all-in-one-paypal-for-woocommerce'));
             } else {
                 $this->log(__('Relay Response Tokens Mismatch', 'all-in-one-paypal-for-woocommerce'));
-                $this->redirect_to($order->get_checkout_payment_url(true));
+                $this->paypal_advance_url_redirect($order->get_checkout_payment_url(true));
                 exit;
             }
         }
         $status = isset($order->status) ? $order->status : $order->get_status();
         if ($status == 'processing' || $status == 'completed') {
-            if ($not_silentreq_debug) {
+            if ($paypal_advance_silent_debug) {
                 $this->log(sprintf(__('Redirecting to Thank You Page for order %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number()));
             }
-            $this->redirect_to($this->get_return_url($order));
+            $this->paypal_advance_url_redirect($this->get_return_url($order));
         }
         if (isset($_REQUEST['error']) && $_REQUEST['error'] == 'true' && $_POST['RESULT'] != 0) {
             if ($_POST['RESULT'] == 12 && $status != 'failed') {
@@ -140,12 +140,12 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
             }
             wc_clear_notices();
             wc_add_notice(__('Error:', 'all-in-one-paypal-for-woocommerce') . ' "' . urldecode($_POST['RESPMSG']) . '"', 'error');
-            if ($not_silentreq_debug) {
+            if ($paypal_advance_silent_debug) {
                 $this->log(sprintf(__('Silent Error Occurred while processing %s : %s, status: %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number(), urldecode($_POST['RESPMSG']), $_POST['RESULT']));
             } elseif ($debug == 'yes') {
                 $this->log(sprintf(__('Error Occurred while processing %s : %s, status: %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number(), urldecode($_POST['RESPMSG']), $_POST['RESULT']));
             }
-            $this->redirect_to($order->get_checkout_payment_url(true));
+            $this->paypal_advance_url_redirect($order->get_checkout_payment_url(true));
         } elseif (isset($_REQUEST['cancel_ec_trans']) && $_REQUEST['cancel_ec_trans'] == 'true' && !isset($_REQUEST['silent'])) {
             wp_redirect($order->get_cancel_order_url());
             exit;
@@ -187,10 +187,10 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                 $order->add_order_note(sprintf(__('Received result of Inquiry Transaction for the  (Order: %s) and is successful', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number()));
                 $order->payment_complete($_POST['PNREF']);
                 WC()->cart->empty_cart();
-                if ($not_silentreq_debug) {
+                if ($paypal_advance_silent_debug) {
                     $this->log(sprintf(__('Redirecting to Thank You Page for order %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number()));
                 }
-                $this->redirect_to($this->get_return_url($order));
+                $this->paypal_advance_url_redirect($this->get_return_url($order));
             }
         }
     }
@@ -198,7 +198,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    function get_secure_token($order) {
+    function paypal_advance_get_secure_token($order) {
         static $length_error = 0;
         if ($this->debug == 'yes') {
             $this->log(sprintf(__('Requesting for the Secured Token for the order %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number()));
@@ -239,9 +239,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
             'SHIPTOZIP' => $order->shipping_postcode,
             'SHIPTOCOUNTRY[' . strlen($order->shipping_country) . ']' => $order->shipping_country,
             'BUTTONSOURCE' => 'mbjtechnolabs_SP',
-            'RETURNURL[' . strlen($this->relay_response_url) . ']' => $this->relay_response_url,
-            'ERRORURL[' . strlen($this->relay_response_url) . ']' => $this->relay_response_url,
-            'SILENTPOSTURL[' . strlen($this->relay_response_url) . ']' => $this->relay_response_url,
+            'RETURNURL[' . strlen($this->paypal_advance_return_response_url) . ']' => $this->paypal_advance_return_response_url,
+            'ERRORURL[' . strlen($this->paypal_advance_return_response_url) . ']' => $this->paypal_advance_return_response_url,
+            'SILENTPOSTURL[' . strlen($this->paypal_advance_return_response_url) . ']' => $this->paypal_advance_return_response_url,
             'URLMETHOD' => 'POST',
             'TEMPLATE' => $template,
             'PAGECOLLAPSEBGCOLOR' => ltrim($this->page_collapse_bgcolor, '#'),
@@ -275,8 +275,8 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                     $item_names[] = "All selected items, refer to Woocommerce order details";
                 }
                 $items_str = sprintf(__('Order %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number()) . " - " . implode(', ', $item_names);
-                $items_names_str = $this->paypal_advanced_item_name($items_str);
-                $items_desc_str = $this->paypal_advanced_item_desc($items_str);
+                $items_names_str = $this->paypal_advanced_item_name_helper($items_str);
+                $items_desc_str = $this->paypal_advanced_item_desc_helper($items_str);
                 $paypal_args['L_NAME0[' . strlen($items_names_str) . ']'] = $items_names_str;
                 $paypal_args['L_DESC0[' . strlen($items_desc_str) . ']'] = $items_desc_str;
                 $paypal_args['L_QTY0'] = 1;
@@ -295,7 +295,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                         $item_meta = new WC_order_item_meta($item['item_meta']);
                         if ($length_error == 0 && $meta = $item_meta->display(true, true)) {
                             $item_name .= ' (' . $meta . ')';
-                            $item_name = $this->paypal_advanced_item_name($item_name);
+                            $item_name = $this->paypal_advanced_item_name_helper($item_name);
                         }
                         $paypal_args['L_NAME' . $item_loop . '[' . strlen($item_name) . ']'] = $item_name;
                         if ($product->get_sku())
@@ -358,7 +358,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                     $this->log(sprintf(__('Secured Token generation failed for the order %s with error: %s', 'all-in-one-paypal-for-woocommerce'), $order->get_order_number(), $e->getMessage()));
                 }
                 $length_error++;
-                return $this->get_secure_token($order);
+                return $this->paypal_advance_get_secure_token($order);
             }
         }
     }
@@ -538,7 +538,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     public function process_payment($order_id) {
         $order = new WC_Order($order_id);
         try {
-            $this->securetoken = $this->get_secure_token($order);
+            $this->securetoken = $this->paypal_advance_get_secure_token($order);
             if ($this->securetoken != "") {
                 update_post_meta($order->id, '_secure_token_id', $this->secure_token_id);
                 update_post_meta($order->id, '_secure_token', $this->securetoken);
@@ -612,7 +612,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function receipt_page($order_id) {
+    public function paypal_advance_receipt_page($order_id) {
         $PF_MODE = $this->settings['testmode'] == 'yes' ? 'TEST' : 'LIVE';
         $order = new WC_Order($order_id);
         $this->secure_token_id = get_post_meta($order->id, '_secure_token_id', true);
@@ -635,7 +635,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function paypal_advanced_item_name($item_name) {
+    public function paypal_advanced_item_name_helper($item_name) {
         if (strlen($item_name) > 36) {
             $item_name = substr($item_name, 0, 33) . '...';
         }
@@ -645,7 +645,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
     /**
      * @since    1.0.0
      */
-    public function paypal_advanced_item_desc($item_desc) {
+    public function paypal_advanced_item_desc_helper($item_desc) {
         if (strlen($item_desc) > 127) {
             $item_desc = substr($item_desc, 0, 124) . '...';
         }
