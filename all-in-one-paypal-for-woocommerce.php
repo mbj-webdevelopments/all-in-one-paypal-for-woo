@@ -12,7 +12,15 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       all-in-one-paypal-for-woocommerce
  * Domain Path:       /languages
+ * 
+ *************
+ * Attribution
+ *************
+ * All in One PayPal for WooCommerce is a derivative work of the code from WooThemes / Limecuda,
+ * which is licensed with GPLv3.  This code is also licensed under the terms
+ * of the GNU Public License, version 3.
  */
+ 
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
