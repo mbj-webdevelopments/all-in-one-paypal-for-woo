@@ -32,12 +32,12 @@ Easy steps to install the plugin:
 
 ## Frequently Asked Questions
 
-### How do I create sandbox accounts for testing? =
+### How do I create sandbox accounts for testing?
 
 * [view PayPal guide](https://developer.paypal.com/docs/classic/lifecycle/sb_create-accounts/)  
  
 
-### Where do I get my API credentials? =
+### Where do I get my API credentials?
 
 * Live credentials can be obtained by signing in to your live PayPal account here:  https://www.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run
 * Sandbox credentials can be obtained by viewing the sandbox account profile within your PayPal developer account, or by signing in with a sandbox account here:  https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run	
