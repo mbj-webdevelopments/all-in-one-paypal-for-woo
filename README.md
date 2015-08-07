@@ -3,11 +3,18 @@ All in One PayPal for WooCommerce Developed by an Certified PayPal Developer, of
 
 Easily add PayPal payment options to your WordPress / WooCommerce website.
 
-    * PayPal Pro Hosted
-    * PayPal Advanced
-    * PayPal Digital Goods
-    * PayPal Pro
-    * PayPal PayFlow
+   * PayPal Pro Hosted
+        * United Kingdom – Website Payments Pro Hosted Solution
+        * France – PayPal Intégral Evolution
+        * Australia – Website Payments Pro Hosted Solution
+        * Hong Kong – Website Payments Pro Hosted Solution
+        * Italy – PayPal Pro
+        * Spain – Pasarela Integral
+        * Japan – Website Payments Plus
+  * PayPal Advanced
+  * PayPal Digital Goods
+  * PayPal Pro
+  * PayPal PayFlow
 
 	
 ## Installation
