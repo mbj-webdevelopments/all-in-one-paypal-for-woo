@@ -72,6 +72,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
          * class.
          */
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/all-in-one-paypal-for-woocommerce-admin.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->plugin_name . 'activation', plugin_dir_url(__FILE__) . 'css/all-in-one-paypal-for-woocommerce-public-activation.css', array(), $this->version, 'all');
     }
 
     /**
@@ -102,12 +103,34 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
         }
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-pro-hosted.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-advanced.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-digital-goods.php';
+        require_once( 'partials/lib/paypal-digital-goods/paypal-purchase.class.php' );
+        require_once( 'partials/lib/paypal-digital-goods/paypal-subscription.class.php' );
+        
     }
 
     public function all_in_one_paypal_for_woocommerce_add_gateway($methods) {
         $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted';
         $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced';
+        $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods';
         return $methods;
     }
 
+    public function all_in_one_paypal_for_woocommerce_paypal_digital_goods_subscription_status($order_id, $profile_id) {
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway = new All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods();
+        $paypal_object = $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway->get_paypal_object($order_id);
+        $transaction_details = $paypal_object->get_details($profile_id);
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway->process_subscription_sign_up($transaction_details);
+    }
+
+    public function all_in_one_paypal_for_woocommerce_paypal_digital_goods_process_ipn_request($transaction_details) {
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway = new All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods();
+        $transaction_details = stripslashes_deep($transaction_details);
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway->process_ipn_request($transaction_details);
+    }
+
+    public function all_in_one_paypal_for_woocommerce_paypal_digital_goods_ajax_do_express_checkout() {
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway = new All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods();
+        $all_in_one_paypal_for_woocommerce_paypal_digital_goods_gateway->ajax_do_express_checkout();
+    }
 }

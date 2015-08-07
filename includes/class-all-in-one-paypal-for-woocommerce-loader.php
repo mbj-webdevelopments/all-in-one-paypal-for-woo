@@ -1,16 +1,6 @@
 <?php
 
 /**
- * Register all actions and filters for the plugin
- *
- * @link       http://localleadminer.com/
- * @since      1.0.0
- *
- * @package    All_In_One_Paypal_For_Woocommerce
- * @subpackage All_In_One_Paypal_For_Woocommerce/includes
- */
-
-/**
  * Register all actions and filters for the plugin.
  *
  * Maintain a list of all hooks that are registered throughout

@@ -1,19 +1,6 @@
 <?php
 
 /**
- * Define the internationalization functionality
- *
- * Loads and defines the internationalization files for this plugin
- * so that it is ready for translation.
- *
- * @link       http://localleadminer.com/
- * @since      1.0.0
- *
- * @package    All_In_One_Paypal_For_Woocommerce
- * @subpackage All_In_One_Paypal_For_Woocommerce/includes
- */
-
-/**
  * Define the internationalization functionality.
  *
  * Loads and defines the internationalization files for this plugin
