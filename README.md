@@ -3,9 +3,9 @@ All in One PayPal for WooCommerce Developed by an Certified PayPal Developer, of
 
 Easily add PayPal payment options to your WordPress / WooCommerce website.
 
-	* PayPal Pro Hosted
-	* PayPal Advanced
-        * PayPal Digital Goods
+    * PayPal Pro Hosted
+    * PayPal Advanced
+    * PayPal Digital Goods
 	
 ## Installation
 
