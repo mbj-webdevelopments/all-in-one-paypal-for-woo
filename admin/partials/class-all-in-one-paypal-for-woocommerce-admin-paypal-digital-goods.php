@@ -328,7 +328,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods extends WC_Pa
         $paypal_args = array(
             'invoice_number' => $this->invoice_prefix . $order->id,
             'custom' => $order->order_key,
-            'BUTTONSOURCE' => 'WooThemes_Cart',
+            'BUTTONSOURCE' => 'mbjtechnolabs_SP',
             'amount' => $recurring_amount,
             'average_amount' => $recurring_amount,
             'start_date' => apply_filters('woocommerce_paypal_digital_goods_subscription_start_date', gmdate('Y-m-d\TH:i:s', gmdate('U') + ( 13 * 60 * 60 )), $order),
@@ -386,7 +386,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods extends WC_Pa
         $paypal_args = array(
             'name' => sprintf(__('Order #%s', 'all-in-one-paypal-for-woocommerce'), $order->id),
             'description' => sprintf(__('Payment for Order #%s', 'all-in-one-paypal-for-woocommerce'), $order->id),
-            'BUTTONSOURCE' => 'WooThemes_Cart',
+            'BUTTONSOURCE' => 'mbjtechnolabs_SP',
             'amount' => number_format($order_total, 2, '.', ''),
             'tax_amount' => number_format($order->get_total_tax(), 2, '.', ''),
             'invoice_number' => $this->invoice_prefix . $order->id,
