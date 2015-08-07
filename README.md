@@ -6,6 +6,9 @@ Easily add PayPal payment options to your WordPress / WooCommerce website.
     * PayPal Pro Hosted
     * PayPal Advanced
     * PayPal Digital Goods
+    * PayPal Pro
+    * PayPal PayFlow
+
 	
 ## Installation
 

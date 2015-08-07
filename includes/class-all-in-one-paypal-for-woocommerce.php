@@ -138,10 +138,18 @@ class All_In_One_Paypal_For_Woocommerce {
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-        $this->loader->add_action( 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_check_subscription_status', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_subscription_status', 10, 2 );
-        $this->loader->add_action( 'valid-paypal-standard-ipn-request', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_process_ipn_request', 1 );
-        $this->loader->add_action( 'wp_ajax_all_in_one_paypal_for_woocommerce_paypal_digital_goods_do_express_checkout', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_ajax_do_express_checkout' );
-        $this->loader->add_action( 'wp_ajax_nopriv_all_in_one_paypal_for_woocommerce_paypal_digital_goods_do_express_checkout', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_ajax_do_express_checkout' );
+        $this->loader->add_action('all_in_one_paypal_for_woocommerce_paypal_digital_goods_check_subscription_status', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_subscription_status', 10, 2);
+        $this->loader->add_action('valid-paypal-standard-ipn-request', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_process_ipn_request', 1);
+        $this->loader->add_action('wp_ajax_all_in_one_paypal_for_woocommerce_paypal_digital_goods_do_express_checkout', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_ajax_do_express_checkout');
+        $this->loader->add_action('wp_ajax_nopriv_all_in_one_paypal_for_woocommerce_paypal_digital_goods_do_express_checkout', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_ajax_do_express_checkout');
+        $this->loader->add_action('woocommerce_order_status_on-hold_to_processing', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_capture_payment');
+        $this->loader->add_action('woocommerce_order_status_on-hold_to_completed', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_capture_payment');
+        $this->loader->add_action('woocommerce_order_status_on-hold_to_cancelled', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_cancel_payment');
+        $this->loader->add_action('woocommerce_order_status_on-hold_to_refunded', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_cancel_payment');
+        if (is_admin()) {
+            $this->loader->add_action('admin_notices', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_ssl_check');
+        }
+        $this->loader->add_action('admin_init', $plugin_admin, 'all_in_one_paypal_for_woocommerce_paypal_pro_update_ssl_nag');
         /*
          * Plugin Loaded
          */
@@ -168,8 +176,7 @@ class All_In_One_Paypal_For_Woocommerce {
 
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-        $this->loader->add_action( 'get_header', $plugin_public, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_paypal_return', 11 );
-        
+        $this->loader->add_action('get_header', $plugin_public, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_paypal_return', 11);
     }
 
     /**
