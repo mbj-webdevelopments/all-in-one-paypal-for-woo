@@ -12,7 +12,6 @@ Easily add PayPal payment options to your WordPress / WooCommerce website.
         * Italy – PayPal Pro
         * Spain – Pasarela Integral
         * Japan – Website Payments Plus
-
  * PayPal Advanced
  * PayPal Digital Goods
  * PayPal Pro
