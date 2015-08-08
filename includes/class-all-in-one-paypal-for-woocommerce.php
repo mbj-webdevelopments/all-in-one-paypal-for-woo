@@ -161,6 +161,16 @@ class All_In_One_Paypal_For_Woocommerce {
          */
 
         $this->loader->add_filter('woocommerce_payment_gateways', $plugin_admin, 'all_in_one_paypal_for_woocommerce_add_gateway', 10, 1);
+
+        $this->loader->add_action('admin_head', $plugin_admin, 'apap_add_validation_script');
+        $this->loader->add_action('init', $plugin_admin, 'apap_check_ipn');
+        $this->loader->add_action('woocommerce_product_options_general_product_data', $plugin_admin, 'apap_display_product_meta');
+        $this->loader->add_action('woocommerce_process_product_meta', $plugin_admin, 'apap_save_product_meta', 10, 1);
+        $this->loader->add_action('edit_term', $plugin_admin, 'apap_category_save', 10, 3);
+        $this->loader->add_action('created_term', $plugin_admin, 'apap_category_save', 10, 3);
+        $this->loader->add_action('woocommerce_checkout_process', $plugin_admin, 'apap_cart_validation_for_rec_limit');
+        $this->loader->add_action('product_cat_add_form_fields', $plugin_admin, 'apap_category_new_fields');
+        $this->loader->add_action('product_cat_edit_form_fields', $plugin_admin, 'apap_category_edit_fields', 10, 2);
     }
 
     /**
