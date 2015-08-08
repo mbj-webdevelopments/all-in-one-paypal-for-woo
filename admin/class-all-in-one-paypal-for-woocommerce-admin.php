@@ -96,6 +96,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-digital-goods.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-pro-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-pro.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-adaptive-payments.php';
         require_once( 'partials/lib/paypal-digital-goods/paypal-purchase.class.php' );
         require_once( 'partials/lib/paypal-digital-goods/paypal-subscription.class.php' );
     }
