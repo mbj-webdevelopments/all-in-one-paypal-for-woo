@@ -235,6 +235,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
         $order = new WC_Order($order_id);
         $this->log('Plugin version #' . $this->plug_version);
         $this->log('start payment process for order #' . $order_id);
+        $cart_discount = $this->is_wc_version_greater_2_3() ? 0 : WC()->cart->get_order_discount_total(); 
         $params = array('business' => $this->email,
             'bn' => 'mbjtechnolabs_SP',
             'buyer_email' => $order->billing_email,
@@ -245,9 +246,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
             'paymentaction' => 'sale',
             'return' => add_query_arg('wc-api', 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted', home_url('/')),
             'notify_url' => '',
-            'shipping' => number_format($order->get_total_shipping(), 2, '.', ''),
-            'tax' => number_format($order->get_total_tax(), 2, '.', ''),
-            'subtotal' => $order->get_subtotal(),
+            'shipping' => number_format((WC()->cart->shipping_total + WC()->cart->shipping_tax_total), 2, '.', ''),
+            'tax' => '',
+            'subtotal' => number_format((WC()->cart->cart_contents_total + WC()->cart->fee_total - $cart_discount + WC()->cart->tax_total), 2, '.', ''),
             'billing_first_name' => $order->billing_first_name,
             'billing_last_name' => $order->billing_last_name,
             'billing_address1' => $order->billing_address_1,
@@ -454,6 +455,14 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
             }
             $this->log->add('paypal-pro-hosted', $message);
         }
+    }
+
+    public function is_wc_version_greater_2_3() {
+        return $this->get_wc_version() && version_compare($this->get_wc_version(), '2.3', '>=');
+    }
+
+    public function get_wc_version() {
+        return defined('WC_VERSION') && WC_VERSION ? WC_VERSION : null;
     }
 
 }
