@@ -1,36 +1,5 @@
 <?php
 
-/**
- * 	Angell EYE PayPal NVP Class
- * 	An open source PHP library written to easily work with PayPal's API's
- * 	
- *  Copyright � 2014  Andrew K. Angell
- * 	Email:  andrew@angelleye.com
- *  Facebook: angelleyeconsulting
- *  Twitter: angelleye
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
- * @package			Angell_EYE_PayPal_Class_Library
- * @author			Andrew K. Angell
- * @copyright       Copyright � 2014 Angell EYE, LLC
- * @link			https://github.com/angelleye/PayPal-PHP-Library
- * @website			http://www.angelleye.com
- * @since			Version 1.52
- * @updated			01.14.2014
- * @filesource
- */
 class PayPal_Express_PayPal {
 
     var $APIUsername = '';
@@ -45,32 +14,19 @@ class PayPal_Express_PayPal {
     var $PathToCertKeyPEM = '';
     var $SSL = '';
 
-    /**
-     * Constructor
-     *
-     * @access	public
-     * @param	array	config preferences
-     * @return	void
-     */
     function __construct($DataArray) {
         if (isset($DataArray['Sandbox'])) {
             $this->Sandbox = $DataArray['Sandbox'];
         } else {
             $this->Sandbox = true;
         }
-
         $this->APIVersion = isset($DataArray['APIVersion']) ? $DataArray['APIVersion'] : '112.0';
         $this->APIMode = isset($DataArray['APIMode']) ? $DataArray['APIMode'] : 'Signature';
         $this->APIButtonSource = 'AngellEYE_SP_WooCommerce';
         $this->PathToCertKeyPEM = '/path/to/cert/pem.txt';
         $this->SSL = $_SERVER['SERVER_PORT'] == '443' ? true : false;
         $this->APISubject = isset($DataArray['APISubject']) ? $DataArray['APISubject'] : '';
-
         if ($this->Sandbox) {
-            // Show Errors
-            //error_reporting(E_ALL);
-            //ini_set('display_errors', '1');
-            # Sandbox
             $this->APIUsername = isset($DataArray['APIUsername']) && $DataArray['APIUsername'] != '' ? $DataArray['APIUsername'] : '';
             $this->APIPassword = isset($DataArray['APIPassword']) && $DataArray['APIPassword'] != '' ? $DataArray['APIPassword'] : '';
             $this->APISignature = isset($DataArray['APISignature']) && $DataArray['APISignature'] != '' ? $DataArray['APISignature'] : '';
@@ -81,12 +37,9 @@ class PayPal_Express_PayPal {
             $this->APISignature = isset($DataArray['APISignature']) && $DataArray['APISignature'] != '' ? $DataArray['APISignature'] : '';
             $this->EndPointURL = isset($DataArray['EndPointURL']) && $DataArray['EndPointURL'] != '' ? $DataArray['EndPointURL'] : 'https://api-3t.paypal.com/nvp';
         }
-
-        // Create the NVP credentials string which is required in all calls.
         $this->NVPCredentials = 'USER=' . $this->APIUsername . '&PWD=' . $this->APIPassword . '&VERSION=' . $this->APIVersion . '&BUTTONSOURCE=' . $this->APIButtonSource;
         $this->NVPCredentials .= $this->APISubject != '' ? '&SUBJECT=' . $this->APISubject : '';
         $this->NVPCredentials .= $this->APIMode == 'Signature' ? '&SIGNATURE=' . $this->APISignature : '';
-
         $this->Countries = array(
             'Afghanistan' => 'AF',
             'ÌÉland Islands' => 'AX',
@@ -408,7 +361,6 @@ class PayPal_Express_PayPal {
             'Armed Forces Americas' => 'AA',
             'Armed Forces' => 'AE',
             'Armed Forces Pacific' => 'AP');
-
         $this->AVSCodes = array("A" => "Address Matches Only (No ZIP)",
             "B" => "Address Matches Only (No ZIP)",
             "C" => "This tranaction was declined.",
@@ -426,7 +378,6 @@ class PayPal_Express_PayPal {
             "X" => "Exact Match - Address and Nine-Digit ZIP",
             "Y" => "Address and five-digit Zip match",
             "Z" => "Five-Digit ZIP Matches (No Address)");
-
         $this->CVV2Codes = array(
             "E" => "N/A",
             "M" => "Match",
@@ -436,7 +387,6 @@ class PayPal_Express_PayPal {
             "U" => "Service Unavailable - N/A",
             "X" => "No Response - N/A"
         );
-
         $this->CurrencyCodes = array(
             'AUD' => 'Austrailian Dollar',
             'BRL' => 'Brazilian Real',
@@ -464,166 +414,74 @@ class PayPal_Express_PayPal {
         );
     }
 
-// End function PayPalPro()
-
-    /**
-     * Get the current API version setting
-     *
-     * @access	public
-     * @return	string
-     */
     function GetAPIVersion() {
         return $this->APIVersion;
     }
 
-    /**
-     * Get the country code of the requested country
-     *
-     * @access	public
-     * @param	string	country name
-     * @return	string
-     */
     function GetCountryCode($CountryName) {
         return $this->Countries[$CountryName];
     }
 
-    /**
-     * Get the state code for a requestad state
-     *
-     * @access	public
-     * @param	string	state/province name
-     * @return	string
-     */
     function GetStateCode($StateOrProvinceName) {
         return $this->States[$StateOrProvinceName];
     }
 
-    /**
-     * Get the country name based on the country code
-     *
-     * @access	public
-     * @param	string	country code
-     * @return	string
-     */
     function GetCountryName($CountryCode) {
         $Countries = array_flip($this->Countries);
         return $Countries[$CountryCode];
     }
 
-    /**
-     * Get the state name based on the l
-     *
-     * @access	public
-     * @param	array	state/province code
-     * @return	string
-     */
     function GetStateName($StateOrProvinceName) {
         $States = array_flip($this->States);
         return $States[$StateOrProvinceName];
     }
 
-    /**
-     * Get the AVS (address verification) message
-     *
-     * @access	public
-     * @param	string	AVS code
-     * @return	string
-     */
     function GetAVSCodeMessage($AVSCode) {
         return $this->AVSCodes[$AVSCode];
     }
 
-    /**
-     * Get the security digits (CVV2 Code) message
-     *
-     * @access	public
-     * @param	string	CVV2 code
-     * @return	string
-     */
     function GetCVV2CodeMessage($CVV2Code) {
         return $this->CVV2Codes[$CVV2Code];
     }
 
-    /**
-     * Get the currency code text value
-     *
-     * @access	public
-     * @param	string	currency code
-     * @return	string
-     */
     function GetCurrencyCodeText($CurrencyCode) {
         return $this->CurrencyCodes[$CurrencyCode];
     }
 
-    /**
-     * Get the currency code based on the text value
-     *
-     * @access	public
-     * @param	string	text value
-     * @return	string
-     */
     function GetCurrencyCode($CurrencyCodeText) {
         $CurrencyCodes = array_flip($this->CurrencyCodes);
         return $CurrencyCodes[$CurrencyCodeText];
     }
 
-    /**
-     * Send the API request to PayPal using CURL
-     *
-     * @access	public
-     * @param	string	NVP string
-     * @return	string
-     */
     function CURLRequest($Request = "", $APIName = "", $APIOperation = "") {
         $curl = curl_init();
-        // curl_setopt($curl, CURLOPT_HEADER,TRUE);
         curl_setopt($curl, CURLOPT_VERBOSE, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_TIMEOUT, 30);
         curl_setopt($curl, CURLOPT_URL, $this->EndPointURL);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
-
         if ($this->APIMode == 'Certificate') {
             curl_setopt($curl, CURLOPT_SSLCERT, $this->PathToCertKeyPEM);
         }
-
         $Response = curl_exec($curl);
         curl_close($curl);
         return $Response;
     }
 
-    /**
-     * Convert an NVP string to an array with URL decoded values
-     *
-     * @access	public
-     * @param	string	NVP string
-     * @return	array
-     */
     function NVPToArray($NVPString) {
         $proArray = array();
         while (strlen($NVPString)) {
-            // name
             $keypos = strpos($NVPString, '=');
             $keyval = substr($NVPString, 0, $keypos);
-            // value
             $valuepos = strpos($NVPString, '&') ? strpos($NVPString, '&') : strlen($NVPString);
             $valval = substr($NVPString, $keypos + 1, $valuepos - $keypos - 1);
-            // decoding the respose
             $proArray[$keyval] = urldecode($valval);
             $NVPString = substr($NVPString, $valuepos + 1, strlen($NVPString));
         }
-
         return $proArray;
     }
 
-    /**
-     * Check whether or not the API returned SUCCESS or SUCCESSWITHWARNING
-     *
-     * @access	public
-     * @param	string	ACK returned from PayPal
-     * @return	boolean
-     */
     function APICallSuccessful($ack) {
         if (strtoupper($ack) != 'SUCCESS' && strtoupper($ack) != 'SUCCESSWITHWARNING' && strtoupper($ack) != 'PARTIALSUCCESS') {
             return false;
@@ -632,13 +490,6 @@ class PayPal_Express_PayPal {
         }
     }
 
-    /**
-     * Check whether or not warnings were returned
-     *
-     * @access	public
-     * @param	string	ACK returned from PayPal
-     * @return	boolean
-     */
     function WarningsReturned($ack) {
         if (strtoupper($ack) == 'SUCCESSWITHWARNING') {
             return true;
@@ -647,15 +498,7 @@ class PayPal_Express_PayPal {
         }
     }
 
-    /**
-     * Get all errors returned from PayPal
-     *
-     * @access	public
-     * @param	array	PayPal NVP response
-     * @return	array
-     */
     function GetErrors($DataArray) {
-
         $Errors = array();
         $n = 0;
         while (isset($DataArray['L_ERRORCODE' . $n . ''])) {
@@ -663,28 +506,18 @@ class PayPal_Express_PayPal {
             $LShortMessage = isset($DataArray['L_SHORTMESSAGE' . $n . '']) ? $DataArray['L_SHORTMESSAGE' . $n . ''] : '';
             $LLongMessage = isset($DataArray['L_LONGMESSAGE' . $n . '']) ? $DataArray['L_LONGMESSAGE' . $n . ''] : '';
             $LSeverityCode = isset($DataArray['L_SEVERITYCODE' . $n . '']) ? $DataArray['L_SEVERITYCODE' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_ERRORCODE' => $LErrorCode,
                 'L_SHORTMESSAGE' => $LShortMessage,
                 'L_LONGMESSAGE' => $LLongMessage,
                 'L_SEVERITYCODE' => $LSeverityCode
             );
-
             array_push($Errors, $CurrentItem);
             $n++;
         }
-
         return $Errors;
     }
 
-    /**
-     * Display errors on screen using line breaks.
-     *
-     * @access	public
-     * @param	array	Errors array returned from class
-     * @return	output
-     */
     function DisplayErrors($Errors) {
         foreach ($Errors as $ErrorVar => $ErrorVal) {
             $CurrentError = $Errors[$ErrorVar];
@@ -698,22 +531,13 @@ class PayPal_Express_PayPal {
                 } elseif ($CurrentErrorVar == 'L_SEVERITYCODE') {
                     $CurrentVarName = 'Severity Code';
                 }
-
                 echo $CurrentVarName . ': ' . $CurrentErrorVal . '<br />';
             }
             echo '<br />';
         }
     }
 
-    /**
-     * Parse order items from an NVP string
-     *
-     * @access	public
-     * @param	array	NVP string
-     * @return	array
-     */
     function GetOrderItems($DataArray) {
-
         $OrderItems = array();
         $n = 0;
         while (isset($DataArray['L_NAME' . $n . ''])) {
@@ -733,7 +557,6 @@ class PayPal_Express_PayPal {
             $LItemLengthUnit = isset($DataArray['L_ITEMLENGTHUNIT' . $n . '']) ? $DataArray['L_ITEMLENGTHUNIT' . $n . ''] : '';
             $LeBayTransID = isset($DataArray['L_EBAYITEMTXNID' . $n . '']) ? $DataArray['L_EBAYITEMTXNID' . $n . ''] : '';
             $LeBayOrderID = isset($DataArray['L_EBAYITEMORDERID' . $n . '']) ? $DataArray['L_EBAYITEMORDERID' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_NAME' => $LName,
                 'L_DESC' => $LDesc,
@@ -752,23 +575,12 @@ class PayPal_Express_PayPal {
                 'L_EBAYITEMTXNID' => $LeBayTransID,
                 'L_EBAYITEMORDERID' => $LeBayOrderID
             );
-
             array_push($OrderItems, $CurrentItem);
             $n++;
         }
-
         return $OrderItems;
     }
 
-// End function GetOrderItems
-
-    /**
-     * Get all payment(s) details from an NVP string
-     *
-     * @access	public
-     * @param	array	NVP string
-     * @return	array
-     */
     function GetPayments($DataArray) {
         $Payments = array();
         $n = 0;
@@ -800,7 +612,6 @@ class PayPal_Express_PayPal {
                 'ALLOWEDPAYMENTMETHOD' => isset($DataArray['PAYMENTREQUEST_' . $n . '_ALLOWEDPAYMENTMETHOD']) ? $DataArray['PAYMENTREQUEST_' . $n . '_ALLOWEDPAYMENTMETHOD'] : '',
                 'PAYMENTREQUESTID' => isset($DataArray['PAYMENTREQUEST_' . $n . '_PAYMENTREQUESTID']) ? $DataArray['PAYMENTREQUEST_' . $n . '_PAYMENTREQUESTID'] : ''
             );
-
             $n_items = 0;
             $OrderItems = array();
             while (isset($DataArray['L_PAYMENTREQUEST_' . $n . '_AMT' . $n_items])) {
@@ -824,30 +635,19 @@ class PayPal_Express_PayPal {
                     'EBAYITEMORDERID' => isset($DataArray['L_PAYMENTREQUEST_' . $n . '_EBAYITEMORDERID' . $n_items]) ? $DataArray['L_PAYMENTREQUEST_' . $n . '_EBAYITEMORDERID' . $n_items] : '',
                     'EBAYITEMCARTID' => isset($DataArray['L_PAYMENTREQUEST_' . $n . '_EBAYITEMCARTID' . $n_items]) ? $DataArray['L_PAYMENTREQUEST_' . $n . '_EBAYITEMCARTID' . $n_items] : ''
                 );
-
                 array_push($OrderItems, $Item);
                 $n_items++;
             }
             $Payment['ORDERITEMS'] = $OrderItems;
-
             array_push($Payments, $Payment);
             $n++;
         }
-
         return $Payments;
     }
 
-    /**
-     * Parse payment info from Express Checkout API response
-     *
-     * @access	public
-     * @param	array	NVP response string
-     * @return	array
-     */
     function GetExpressCheckoutPaymentInfo($DataArray) {
         $Payments = array();
         $n = 0;
-
         while (isset($DataArray['PAYMENTINFO_' . $n . '_TRANSACTIONID'])) {
             $PaymentInfo = array(
                 'TRANSACTIONID' => isset($DataArray['PAYMENTINFO_' . $n . '_TRANSACTIONID']) ? $DataArray['PAYMENTINFO_' . $n . '_TRANSACTIONID'] : '',
@@ -867,212 +667,123 @@ class PayPal_Express_PayPal {
                 'EBAYITEMAUCTIONTRANSACTIONID' => isset($DataArray['PAYMENTINFO_' . $n . '_EBAYITEMAUCTIONTRANSACTIONID']) ? $DataArray['PAYMENTINFO_' . $n . '_EBAYITEMAUCTIONTRANSACTIONID'] : '',
                 'PAYMENTREQUESTID' => isset($DataArray['PAYMENTINFO_' . $n . '_PAYMENTREQUESTID']) ? $DataArray['PAYMENTINFO_' . $n . '_PAYMENTREQUESTID'] : ''
             );
-
             array_push($Payments, $PaymentInfo);
             $n++;
         }
         return $Payments;
     }
 
-    /**
-     * Mask the API credential values in the API call for logging purposes.
-     *
-     * @access	public
-     * @param	string	API request string.
-     * @return	boolean
-     */
     function MaskAPIResult($api_result) {
         $api_result_array = $this->NVPToArray($api_result);
-
         if (isset($api_result_array['SIGNATURE'])) {
             $api_result_array['USER'] = '*****';
             $api_result_array['PWD'] = '*****';
             $api_result_array['SIGNATURE'] = '*****';
         }
-
         $api_result = '';
         foreach ($api_result_array as $var => $val) {
             $api_result .= $var . '=' . $val . '&';
         }
-
         $api_result_length = strlen($api_result);
         $api_result = substr($api_result, 0, $api_result_length - 1);
-
         return $api_result;
     }
 
-    /**
-     * Save log info to a location on the disk.
-     *
-     * @access	public
-     * @param	array	NVP response string
-     * @return	boolean
-     */
     function Logger($filename, $string_data) {
         $timestamp = strtotime('now');
         $timestamp = date('mdY_giA_', $timestamp);
-
         $string_data = $this->MaskAPIResult($string_data);
-
         $string_data_indiv = '';
         $string_data_array = $this->NVPToArray($string_data);
-
         foreach ($string_data_array as $var => $val) {
             $string_data_indiv .= $var . '=' . $val . chr(13);
         }
-
         $file = $_SERVER['DOCUMENT_ROOT'] . "/paypal/logs/" . $timestamp . $filename . ".txt";
         $fh = fopen($file, 'w');
         fwrite($fh, $string_data . chr(13) . chr(13) . $string_data_indiv);
         fclose($fh);
-
         return true;
     }
 
-    /**
-     * Capture a previously authorized transaction
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoCapture($DataArray) {
         $DCFieldsNVP = '&METHOD=DoCapture';
-
-        // DoCapture Fields
         $DCFields = isset($DataArray['DCFields']) ? $DataArray['DCFields'] : array();
-
         foreach ($DCFields as $DCFieldsVar => $DCFieldsVal) {
             $DCFieldsNVP .= $DCFieldsVal != '' ? '&' . strtoupper($DCFieldsVar) . '=' . urlencode($DCFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DCFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Authorize an amount for processing against a credit card
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoAuthorization($DataArray) {
         $DAFieldsNVP = '&METHOD=DoAuthorization';
-
         $DAFields = isset($DataArray['DAFields']) ? $DataArray['DAFields'] : array();
-
         foreach ($DAFields as $DAFieldsVar => $DAFieldsVal) {
             $DAFieldsNVP .= $DAFieldsVal != '' ? '&' . strtoupper($DAFieldsVar) . '=' . urlencode($DAFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DAFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Reauthorize a previously authorization transaction
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoReauthorization($DataArray) {
         $DRFieldsNVP = '&METHOD=DoReAuthorization';
-
         $DRFields = isset($DataArray['DRFields']) ? $DataArray['DRFields'] : array();
-
         foreach ($DRFields as $DRFieldsVar => $DRFieldsVal) {
             $DRFieldsNVP .= $DRFieldsVal != '' ? '&' . strtoupper($DRFieldsVar) . '=' . urlencode($DRFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DRFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Void a previously authorized transaction.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoVoid($DataArray) {
         $DVFieldsNVP = '&METHOD=DoVoid';
-
         $DVFields = isset($DataArray['DVFields']) ? $DataArray['DVFields'] : array();
-
         foreach ($DVFields as $DVFieldsVar => $DVFieldsVal) {
             $DVFieldsNVP .= $DVFieldsVal != '' ? '&' . strtoupper($DVFieldsVar) . '=' . urlencode($DVFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DVFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Create a mass payment
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function MassPay($DataArray) {
         $MPFieldsNVP = '&METHOD=MassPay';
         $MPItemsNVP = '';
-
-        // MassPay Fields
         $MPFields = isset($DataArray['MPFields']) ? $DataArray['MPFields'] : array();
-
         foreach ($MPFields as $MPFieldsVar => $MPFieldsVal) {
             $MPFieldsNVP .= $MPFieldsVal != '' ? '&' . strtoupper($MPFieldsVar) . '=' . urlencode($MPFieldsVal) : '';
         }
-
-        // MassPay Items Fields	
         $MPItems = isset($DataArray['MPItems']) ? $DataArray['MPItems'] : array();
         $n = 0;
         foreach ($MPItems as $MPItemsVar => $MPItemsVal) {
@@ -1082,95 +793,57 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
         $NVPRequest = $this->NVPCredentials . $MPFieldsNVP . $MPItemsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Refund a prevously processed transaction.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function RefundTransaction($DataArray) {
         $RTFieldsNVP = '&METHOD=RefundTransaction';
-
         $RTFields = isset($DataArray['RTFields']) ? $DataArray['RTFields'] : array();
-
         foreach ($RTFields as $RTFieldsVar => $RTFieldsVal) {
             $RTFieldsNVP .= $RTFieldsVal != '' ? '&' . strtoupper($RTFieldsVar) . '=' . urlencode($RTFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $RTFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Retrieve details about a previous transaction.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetTransactionDetails($DataArray) {
         $GTDFieldsNVP = '&METHOD=GetTransactionDetails';
-
         $GTDFields = isset($DataArray['GTDFields']) ? $DataArray['GTDFields'] : array();
-
         foreach ($GTDFields as $GTDFieldsVar => $GTDFieldsVal) {
             $GTDFieldsNVP .= $GTDFieldsVal != '' ? '&' . strtoupper($GTDFieldsVar) . '=' . urlencode($GTDFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $GTDFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
         $OrderItems = $this->GetOrderItems($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['ORDERITEMS'] = $OrderItems;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Process a credit card directly.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoDirectPayment($DataArray) {
-        // Create empty holders for each portion of the NVP string
         $DPFieldsNVP = '&METHOD=DoDirectPayment';
         $CCDetailsNVP = '';
         $PayerInfoNVP = '';
@@ -1180,44 +853,30 @@ class PayPal_Express_PayPal {
         $PaymentDetailsNVP = '';
         $OrderItemsNVP = '';
         $Secure3DNVP = '';
-
-        // DP Fields
         $DPFields = isset($DataArray['DPFields']) ? $DataArray['DPFields'] : array();
         foreach ($DPFields as $DPFieldsVar => $DPFieldsVal) {
             $DPFieldsNVP .= $DPFieldsVal != '' ? '&' . strtoupper($DPFieldsVar) . '=' . urlencode($DPFieldsVal) : '';
         }
-
-        // CC Details Fields
         $CCDetails = isset($DataArray['CCDetails']) ? $DataArray['CCDetails'] : array();
         foreach ($CCDetails as $CCDetailsVar => $CCDetailsVal) {
             $CCDetailsNVP .= $CCDetailsVal != '' ? '&' . strtoupper($CCDetailsVar) . '=' . urlencode($CCDetailsVal) : '';
         }
-
-        // PayerInfo Type Fields
         $PayerInfo = isset($DataArray['PayerInfo']) ? $DataArray['PayerInfo'] : array();
         foreach ($PayerInfo as $PayerInfoVar => $PayerInfoVal) {
             $PayerInfoNVP .= $PayerInfoVal != '' ? '&' . strtoupper($PayerInfoVar) . '=' . urlencode($PayerInfoVal) : '';
         }
-
-        // Payer Name Fields
         $PayerName = isset($DataArray['PayerName']) ? $DataArray['PayerName'] : array();
         foreach ($PayerName as $PayerNameVar => $PayerNameVal) {
             $PayerNameNVP .= $PayerNameVal != '' ? '&' . strtoupper($PayerNameVar) . '=' . urlencode($PayerNameVal) : '';
         }
-
-        // Address Fields (Billing)
         $BillingAddress = isset($DataArray['BillingAddress']) ? $DataArray['BillingAddress'] : array();
         foreach ($BillingAddress as $BillingAddressVar => $BillingAddressVal) {
             $BillingAddressNVP .= $BillingAddressVal != '' ? '&' . strtoupper($BillingAddressVar) . '=' . urlencode($BillingAddressVal) : '';
         }
-
-        // Payment Details Type Fields
         $PaymentDetails = isset($DataArray['PaymentDetails']) ? $DataArray['PaymentDetails'] : array();
         foreach ($PaymentDetails as $PaymentDetailsVar => $PaymentDetailsVal) {
             $PaymentDetailsNVP .= $PaymentDetailsVal != '' ? '&' . strtoupper($PaymentDetailsVar) . '=' . urlencode($PaymentDetailsVal) : '';
         }
-
-        // Payment Details Item Type Fields
         $OrderItems = isset($DataArray['OrderItems']) ? $DataArray['OrderItems'] : array();
         $n = 0;
         foreach ($OrderItems as $OrderItemsVar => $OrderItemsVal) {
@@ -1227,50 +886,32 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
-        // Ship To Address Fields
         $ShippingAddress = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddress as $ShippingAddressVar => $ShippingAddressVal) {
             $ShippingAddressNVP .= $ShippingAddressVal != '' ? '&' . strtoupper($ShippingAddressVar) . '=' . urlencode($ShippingAddressVal) : '';
         }
-
-        // 3D Secure Fields
         $Secure3D = isset($DataArray['Secure3D']) ? $DataArray['Secure3D'] : array();
         foreach ($Secure3D as $Secure3DVar => $Secure3DVal) {
             $Secure3DNVP .= $Secure3DVal != '' ? '&' . strtoupper($Secure3DVar) . '=' . urlencode($Secure3DVal) : '';
         }
-
-        // Now that we have each chunk we need to go ahead and append them all together for our entire NVP string
         $NVPRequest = $this->NVPCredentials . $DPFieldsNVP . $CCDetailsNVP . $PayerInfoNVP . $PayerNameNVP . $BillingAddressNVP . $PaymentDetailsNVP . $OrderItemsNVP . $ShippingAddressNVP . $Secure3DNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Begin the Express Checkout flow
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function SetExpressCheckout($DataArray) {
         $SECFieldsNVP = '&METHOD=SetExpressCheckout';
         $SurveyChoicesNVP = '';
         $PaymentsNVP = '';
         $ShippingOptionsNVP = '';
         $BillingAgreementsNVP = '';
-
-        // SetExpressCheckout Request Fields
         $SECFields = isset($DataArray['SECFields']) ? $DataArray['SECFields'] : array();
         foreach ($SECFields as $SECFieldsVar => $SECFieldsVal) {
             if (strtoupper($SECFieldsVar) != 'SKIPDETAILS') {
@@ -1279,15 +920,11 @@ class PayPal_Express_PayPal {
                 $SkipDetails = $SECFieldsVal ? true : false;
             }
         }
-
-        // Check to see if the REDIRECTURL should include user-action
         if (isset($SkipDetails) && $SkipDetails) {
             $SkipDetailsOption = 'useraction=commit';
         } else {
             $SkipDetailsOption = 'useraction=continue';
         }
-
-        // Survey Choices
         $SurveyChoices = isset($DataArray['SurveyChoices']) ? $DataArray['SurveyChoices'] : array();
         if ($SECFields['surveyquestion'] != '') {
             $n = 0;
@@ -1296,8 +933,6 @@ class PayPal_Express_PayPal {
                 $n++;
             }
         }
-
-        // Payment Details Type Fields
         $Payments = isset($DataArray['Payments']) ? $DataArray['Payments'] : array();
         $n = 0;
         foreach ($Payments as $PaymentsVar => $PaymentsVal) {
@@ -1319,8 +954,6 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
-        // Billing Agreements
         $BillingAgreements = isset($DataArray['BillingAgreements']) ? $DataArray['BillingAgreements'] : array();
         $n = 0;
         foreach ($BillingAgreements as $BillingAgreementVar => $BillingAgreementVal) {
@@ -1330,8 +963,6 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
-        // Shipping Options Fields
         $ShippingOptions = isset($DataArray['ShippingOptions']) ? $DataArray['ShippingOptions'] : array();
         $n = 0;
         foreach ($ShippingOptions as $ShippingOptionsVar => $ShippingOptionsVal) {
@@ -1341,14 +972,11 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
         $NVPRequest = $this->NVPCredentials . $SECFieldsNVP . $SurveyChoicesNVP . $ShippingOptionsNVP . $BillingAgreementsNVP . $PaymentsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         if (isset($NVPResponseArray['TOKEN']) && $NVPResponseArray['TOKEN'] != '') {
             if ($this->Sandbox) {
                 $NVPResponseArray['REDIRECTURLDIGITALGOODS'] = 'https://www.sandbox.paypal.com/incontext?' . $SkipDetailsOption . '&token=' . $NVPResponseArray['TOKEN'];
@@ -1358,35 +986,20 @@ class PayPal_Express_PayPal {
                 $NVPResponseArray['REDIRECTURL'] = 'https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&' . $SkipDetailsOption . '&token=' . $NVPResponseArray['TOKEN'];
             }
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-// End function SetExpressCheckout()
-
-    /**
-     * Generate an NVP response to return to PayPal's Instant Update (callback) API.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function CallbackResponse($DataArray) {
         $CBFieldsNVP = 'METHOD=CallbackResponse';
         $ShippingOptionsNVP = '';
-
-        // Basic callback response fields.
         $CBFields = isset($DataArray['CBFields']) ? $DataArray['CBFields'] : array();
         foreach ($CBFields as $CBFieldsVar => $CBFieldsVal) {
             $CBFieldsNVP .= $CBFieldsVal != '' ? '&' . strtoupper($CBFieldsVar) . '=' . urlencode($CBFieldsVal) : '';
         }
-
-        // Shipping Options Fields
         $ShippingOptions = isset($DataArray['ShippingOptions']) ? $DataArray['ShippingOptions'] : array();
         $n = 0;
         foreach ($ShippingOptions as $ShippingOptionsVar => $ShippingOptionsVal) {
@@ -1396,63 +1009,36 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
         $NVPResponse = $CBFieldsNVP . $ShippingOptionsNVP;
-
         return $NVPResponse;
     }
 
-    /**
-     * Retrieve Express Checkout information back from PayPal to continue a checkout
-     * after a user has signed in to PayPal and clicked Continue (or Pay)
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetExpressCheckoutDetails($Token) {
         $GECDFieldsNVP = '&METHOD=GetExpressCheckoutDetails&TOKEN=' . $Token;
-
         $NVPRequest = $this->NVPCredentials . $GECDFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
         $OrderItems = $this->GetOrderItems($NVPResponseArray);
         $Payments = $this->GetPayments($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['ORDERITEMS'] = $OrderItems;
         $NVPResponseArray['PAYMENTS'] = $Payments;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-// End function GetExpressCheckoutDetails()
-
-    /**
-     * Finalize an Express Checkout payment and actually process the payment
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoExpressCheckoutPayment($DataArray) {
         $DECPFieldsNVP = '&METHOD=DoExpressCheckoutPayment';
         $PaymentsNVP = '';
         $UserSelectedOptionsNVP = '';
-
-        // DoExpressCheckoutPayment Fields
         $DECPFields = isset($DataArray['DECPFields']) ? $DataArray['DECPFields'] : array();
         foreach ($DECPFields as $DECPFieldsVar => $DECPFieldsVal) {
             $DECPFieldsNVP .= $DECPFieldsVal != '' ? '&' . strtoupper($DECPFieldsVar) . '=' . urlencode($DECPFieldsVal) : '';
         }
-
-        // Payment Details Type Fields
         $Payments = isset($DataArray['Payments']) ? $DataArray['Payments'] : array();
         $n = 0;
         foreach ($Payments as $PaymentsVar => $PaymentsVal) {
@@ -1474,22 +1060,15 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
-        // User Selected Options
         $UserSelectedOptions = isset($DataArray['UserSelectedOptions']) ? $DataArray['UserSelectedOptions'] : array();
         foreach ($UserSelectedOptions as $UserSelectedOptionVar => $UserSelectedOptionVal) {
             $UserSelectedOptionsNVP .= $UserSelectedOptionVal != '' ? '&' . strtoupper($UserSelectedOptionVar) . '=' . urlencode($UserSelectedOptionVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DECPFieldsNVP . $PaymentsNVP . $UserSelectedOptionsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
-        // Loop through all possible payments and parse out data accordingly.
-        // This is to handle parallel payments.
         $n = 0;
         $Payments = array();
         while (isset($NVPResponseArray['PAYMENTINFO_' . $n . '_AMT'])) {
@@ -1510,8 +1089,6 @@ class PayPal_Express_PayPal {
                 'PROTECTIONELIGIBILITY' => isset($NVPResponseArray['PAYMENTINFO_' . $n . '_PROTECTIONELIGIBILITY']) ? $NVPResponseArray['PAYMENTINFO_' . $n . '_PROTECTIONELIGIBILITY'] : '',
                 'ERRORCODE' => isset($NVPResponseArray['PAYMENTINFO_' . $n . '_ERRORCODE']) ? $NVPResponseArray['PAYMENTINFO_' . $n . '_ERRORCODE'] : ''
             );
-
-            // Pull out FMF info for current payment.													
             $FMFilters = array();
             $n_filters = 0;
             while (isset($NVPResponseArray['L_PAYMENTINFO_' . $n . '_FMFFILTERID' . $n_filters])) {
@@ -1522,8 +1099,6 @@ class PayPal_Express_PayPal {
                 $n_filters++;
             }
             $Payment['FMFILTERS'] = $FMFilters;
-
-            // Pull error info for current payment.
             $PaymentErrors = array();
             while (isset($NVPResponseArray['PAYMENTREQUEST_' . $n . '_ERRORCODE'])) {
                 $Error = array(
@@ -1536,50 +1111,33 @@ class PayPal_Express_PayPal {
                 array_push($PaymentErrors, $Error);
             }
             $Payment['ERRORS'] = $PaymentErrors;
-
             array_push($Payments, $Payment);
             $n++;
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['PAYMENTS'] = $Payments;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Search PayPal for transactions in  your account history.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function TransactionSearch($DataArray) {
         $TSFieldsNVP = '&METHOD=TransactionSearch';
         $PayerNameNVP = '';
-
-        // Transaction Search Fields
         $TSFields = isset($DataArray['TSFields']) ? $DataArray['TSFields'] : array();
         foreach ($TSFields as $TSFieldsVar => $TSFieldsVal) {
             $TSFieldsNVP .= $TSFieldsVal != '' ? '&' . strtoupper($TSFieldsVar) . '=' . urlencode($TSFieldsVal) : '';
         }
-
-        // Payer Name Fields
         $PayerName = isset($DataArray['PayerName']) ? $DataArray['PayerName'] : array();
         foreach ($PayerName as $PayerNameVar => $PayerNameVal) {
             $PayerNameNVP .= $PayerNameVal != '' ? '&' . strtoupper($PayerNameVar) . '=' . urlencode($PayerNameVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $TSFieldsNVP . $PayerNameNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $SearchResults = array();
         $n = 0;
         while (isset($NVPResponseArray['L_TIMESTAMP' . $n . ''])) {
@@ -1593,7 +1151,6 @@ class PayPal_Express_PayPal {
             $LAmt = isset($NVPResponseArray['L_AMT' . $n . '']) ? $NVPResponseArray['L_AMT' . $n . ''] : '';
             $LFeeAmt = isset($NVPResponseArray['L_FEEAMT' . $n . '']) ? $NVPResponseArray['L_FEEAMT' . $n . ''] : '';
             $LNetAmt = isset($NVPResponseArray['L_NETAMT' . $n . '']) ? $NVPResponseArray['L_NETAMT' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_TIMESTAMP' => $LTimestamp,
                 'L_TIMEZONE' => $LTimeZone,
@@ -1606,86 +1163,55 @@ class PayPal_Express_PayPal {
                 'L_FEEAMT' => $LFeeAmt,
                 'L_NETAMT' => $LNetAmt
             );
-
             array_push($SearchResults, $CurrentItem);
             $n++;
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['SEARCHRESULTS'] = $SearchResults;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Credit money back to a credit card without a previous transaction reference.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoNonReferencedCredit($DataArray) {
         $DNRCFieldsNVP = '&METHOD=DoNonReferencedCredit';
         $CCDetailsNVP = '';
         $PayerName = '';
         $PayerInfoNVP = '';
         $BillingAddressNVP = '';
-
-        // DoNonReferencedCredit Fields
         $DNRCFields = isset($DataArray['DNRCFields']) ? $DataArray['DNRCFields'] : array();
         foreach ($DNRCFields as $DNRCFieldsVar => $DNRCFieldsVal) {
             $DNRCFieldsNVP .= $DNRCFieldsVal != '' ? '&' . strtoupper($DNRCFieldsVar) . '=' . urlencode($DNRCFieldsVal) : '';
         }
-
-        // CC Details Fields
         $CCDetails = isset($DataArray['CCDetails']) ? $DataArray['CCDetails'] : array();
         foreach ($CCDetails as $CCDetailsVar => $CCDetailsVal) {
             $CCDetailsNVP .= $CCDetailsVal != '' ? '&' . strtoupper($CCDetailsVar) . '=' . urlencode($CCDetailsVal) : '';
         }
-
-        // Payer Name Fields
         $PayerName = isset($DataArray['PayerName']) ? $DataArray['PayerName'] : array();
         foreach ($PayerName as $PayerNameVar => $PayerNameVal) {
             $PayerNameNVP .= $PayerNameVal != '' ? '&' . strtoupper($PayerNameVar) . '=' . urlencode($PayerNameVal) : '';
         }
-
-        // Payer Info Fields
         $PayerInfo = isset($DataArray['PayerInfo']) ? $DataArray['PayerInfo'] : array();
         foreach ($PayerInfo as $PayerInfoVar => $PayerInfoVal) {
             $PayerInfoNVP .= $PayerInfoVal != '' ? '&' . strtoupper($PayerInfoVar) . '=' . urlencode($PayerInfoVal) : '';
         }
-
-        // Address Fields (Billing)
         $BillingAddress = isset($DataArray['BillingAddress']) ? $DataArray['BillingAddress'] : array();
         foreach ($BillingAddress as $BillingAddressVar => $BillingAddressVal) {
             $BillingAddressNVP .= $BillingAddressVal != '' ? '&' . strtoupper($BillingAddressVar) . '=' . urlencode($BillingAddressVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DNRCFieldsNVP . $CCDetailsNVP . $PayerNameNVP . $PayerInfoNVP . $BillingAddressNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Process a new transaction using the same billing info from a previous transaction.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoReferenceTransaction($DataArray) {
         $DRTFieldsNVP = '&METHOD=DoReferenceTransaction';
         $CCDetailsNVP = '';
@@ -1694,20 +1220,14 @@ class PayPal_Express_PayPal {
         $ShippingAddressNVP = '';
         $PaymentDetailsNVP = '';
         $OrderItemsNVP = '';
-
-        // DoReferenceTransaction Fields
         $DRTFields = isset($DataArray['DRTFields']) ? $DataArray['DRTFields'] : array();
         foreach ($DRTFields as $DRTFieldsVar => $DRTFieldsVal) {
             $DRTFieldsNVP .= $DRTFieldsVal != '' ? '&' . strtoupper($DRTFieldsVar) . '=' . urlencode($DRTFieldsVal) : '';
         }
-
-        // Ship To Address Fields
         $ShippingAddress = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddress as $ShippingAddressVar => $ShippingAddressVal) {
             $ShippingAddressNVP .= $ShippingAddressVal != '' ? '&' . strtoupper($ShippingAddressVar) . '=' . urlencode($ShippingAddressVal) : '';
         }
-
-        // Payment Details Item Type Fields
         $OrderItems = isset($DataArray['OrderItems']) ? $DataArray['OrderItems'] : array();
         $n = 0;
         foreach ($OrderItems as $OrderItemsVar => $OrderItemsVal) {
@@ -1717,240 +1237,158 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
-        // CC Details Fields
         $CCDetails = isset($DataArray['CCDetails']) ? $DataArray['CCDetails'] : array();
         foreach ($CCDetails as $CCDetailsVar => $CCDetailsVal) {
             $CCDetailsNVP .= $CCDetailsVal != '' ? '&' . strtoupper($CCDetailsVar) . '=' . urlencode($CCDetailsVal) : '';
         }
-
-        // PayerInfo Type Fields
         $PayerInfo = isset($DataArray['PayerInfo']) ? $DataArray['PayerInfo'] : array();
         foreach ($PayerInfo as $PayerInfoVar => $PayerInfoVal) {
             $PayerInfoNVP .= $PayerInfoVal != '' ? '&' . strtoupper($PayerInfoVar) . '=' . urlencode($PayerInfoVal) : '';
         }
-
-        // Address Fields (Billing)
         $BillingAddress = isset($DataArray['BillingAddress']) ? $DataArray['BillingAddress'] : array();
         foreach ($BillingAddress as $BillingAddressVar => $BillingAddressVal) {
             $BillingAddressNVP .= $BillingAddressVal != '' ? '&' . strtoupper($BillingAddressVar) . '=' . urlencode($BillingAddressVal) : '';
         }
-
-        // Payment Details Fields
         $PaymentDetails = isset($DataArray['PaymentDetails']) ? $DataArray['PaymentDetails'] : array();
         foreach ($PaymentDetails as $PaymentDetailsVar => $PaymentDetailsVal) {
             $PaymentDetailsNVP .= $PaymentDetailsVal != '' ? '&' . strtoupper($PaymentDetailsVar) . '=' . urlencode($PaymentDetailsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DRTFieldsNVP . $ShippingAddressNVP . $OrderItemsNVP . $CCDetailsNVP . $PayerInfoNVP . $BillingAddressNVP . $PaymentDetailsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Get the current PayPal balance.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetBalance($DataArray) {
         $GBFieldsNVP = '&METHOD=GetBalance';
-
-        // GetBalance Fields
         $GBFields = isset($DataArray['GBFields']) ? $DataArray['GBFields'] : array();
         foreach ($GBFields as $GBFieldsVar => $GBFieldsVal) {
             $GBFieldsNVP .= $GBFieldsVal != '' ? '&' . strtoupper($GBFieldsVar) . '=' . urlencode($GBFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $GBFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $BalanceResults = array();
         $n = 0;
         while (isset($NVPResponseArray['L_AMT' . $n . ''])) {
             $LAmt = isset($NVPResponseArray['L_AMT' . $n . '']) ? $NVPResponseArray['L_AMT' . $n . ''] : '';
             $LCurrencyCode = isset($NVPResponseArray['L_CURRENCYCODE' . $n . '']) ? $NVPResponseArray['L_CURRENCYCODE' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_AMT' => $LAmt,
                 'L_CURRENCYCODE' => $LCurrencyCode
             );
-
             array_push($BalanceResults, $CurrentItem);
             $n++;
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['BALANCERESULTS'] = $BalanceResults;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Get the users PayPal account ID.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetPalDetails() {
         $GPFieldsNVP = '&METHOD=GetPalDetails';
-
         $NVPRequest = $this->NVPCredentials . $GPFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Verify an address against PayPal's system.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function AddressVerify($DataArray) {
         $AVFieldsNVP = '&METHOD=AddressVerify';
-
         $AVFields = isset($DataArray['AVFields']) ? $DataArray['AVFields'] : array();
         foreach ($AVFields as $AVFieldsVar => $AVFieldsVal) {
             $AVFieldsNVP .= $AVFieldsVal != '' ? '&' . strtoupper($AVFieldsVar) . '=' . urlencode($AVFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $AVFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Update the status of a transaction in a pending status.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function ManagePendingTransactionStatus($DataArray) {
         $MPTSFieldsNVP = '&METHOD=ManagePendingTransactionStatus';
-
         $MPTSFields = isset($DataArray['MPTSFields']) ? $DataArray['MPTSFields'] : array();
         foreach ($MPTSFields as $MPTSFieldsVar => $MPTSFieldsVal) {
             $MPTSFieldsNVP .= $MPTSFieldsVal != '' ? '&' . strtoupper($MPTSFieldsVar) . '=' . urlencode($MPTSFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $MPTSFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Create a profile to automatically process transactions at given intervals.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function CreateRecurringPaymentsProfile($DataArray) {
         $CRPPFieldsNVP = '&METHOD=CreateRecurringPaymentsProfile';
         $OrderItemsNVP = '';
-
         $CRPPFields = isset($DataArray['CRPPFields']) ? $DataArray['CRPPFields'] : array();
         foreach ($CRPPFields as $CRPPFieldsVar => $CRPPFieldsVal) {
             $CRPPFieldsNVP .= $CRPPFieldsVal != '' ? '&' . strtoupper($CRPPFieldsVar) . '=' . urlencode($CRPPFieldsVal) : '';
         }
-
         $ProfileDetails = isset($DataArray['ProfileDetails']) ? $DataArray['ProfileDetails'] : array();
         foreach ($ProfileDetails as $ProfileDetailsVar => $ProfileDetailsVal) {
             $CRPPFieldsNVP .= $ProfileDetailsVal != '' ? '&' . strtoupper($ProfileDetailsVar) . '=' . urlencode($ProfileDetailsVal) : '';
         }
-
         $ScheduleDetails = isset($DataArray['ScheduleDetails']) ? $DataArray['ScheduleDetails'] : array();
         foreach ($ScheduleDetails as $ScheduleDetailsVar => $ScheduleDetailsVal) {
             $CRPPFieldsNVP .= $ScheduleDetailsVal != '' ? '&' . strtoupper($ScheduleDetailsVar) . '=' . urlencode($ScheduleDetailsVal) : '';
         }
-
         $BillingPeriod = isset($DataArray['BillingPeriod']) ? $DataArray['BillingPeriod'] : array();
         foreach ($BillingPeriod as $BillingPeriodVar => $BillingPeriodVal) {
             $CRPPFieldsNVP .= $BillingPeriodVal != '' ? '&' . strtoupper($BillingPeriodVar) . '=' . urlencode($BillingPeriodVal) : '';
         }
-
         $ActivationDetails = isset($DataArray['ActivationDetails']) ? $DataArray['ActivationDetails'] : array();
         foreach ($ActivationDetails as $ActivationDetailsVar => $ActivationDetailsVal) {
             $CRPPFieldsNVP .= $ActivationDetailsVal != '' ? '&' . strtoupper($ActivationDetailsVar) . '=' . urlencode($ActivationDetailsVal) : '';
         }
-
         $CCDetails = isset($DataArray['CCDetails']) ? $DataArray['CCDetails'] : array();
         foreach ($CCDetails as $CCDetailsVar => $CCDetailsVal) {
             $CRPPFieldsNVP .= $CCDetails != '' ? '&' . strtoupper($CCDetailsVar) . '=' . urlencode($CCDetailsVal) : '';
         }
-
         $PayerInfo = isset($DataArray['PayerInfo']) ? $DataArray['PayerInfo'] : array();
         foreach ($PayerInfo as $PayerInfoVar => $PayerInfoVal) {
             $CRPPFieldsNVP .= $PayerInfoVal != '' ? '&' . strtoupper($PayerInfoVar) . '=' . urlencode($PayerInfoVal) : '';
         }
-
         $PayerName = isset($DataArray['PayerName']) ? $DataArray['PayerName'] : array();
         foreach ($PayerName as $PayerNameVar => $PayerNameVal) {
             $CRPPFieldsNVP .= $PayerNameVal != '' ? '&' . strtoupper($PayerNameVar) . '=' . urlencode($PayerNameVal) : '';
         }
-
         $BillingAddress = isset($DataArray['BillingAddress']) ? $DataArray['BillingAddress'] : array();
         foreach ($BillingAddress as $BillingAddressVar => $BillingAddressVal) {
             $CRPPFieldsNVP .= $BillingAddressVal != '' ? '&' . strtoupper($BillingAddressVar) . '=' . urlencode($BillingAddressVal) : '';
         }
-
         $ShippingAddress = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddress as $ShippingAddressVar => $ShippingAddressVal) {
             $CRPPFieldsNVP .= $ShippingAddressVal != '' ? '&' . strtoupper($ShippingAddressVar) . '=' . urlencode($ShippingAddressVal) : '';
         }
-
-        // Payment Details Item Type Fields
         $OrderItems = isset($DataArray['OrderItems']) ? $DataArray['OrderItems'] : array();
         $n = 0;
         $m = 0;
@@ -1961,232 +1399,144 @@ class PayPal_Express_PayPal {
             }
             $m++;
         }
-
         $NVPRequest = $this->NVPCredentials . $CRPPFieldsNVP . $OrderItemsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Retrieve the details of a previously created recurring payments profile.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetRecurringPaymentsProfileDetails($DataArray) {
         $GRPPDFieldsNVP = '&METHOD=GetRecurringPaymentsProfileDetails';
-
         $GRPPDFields = isset($DataArray['GRPPDFields']) ? $DataArray['GRPPDFields'] : array();
         foreach ($GRPPDFields as $GRPPDFieldsVar => $GRPPDFieldsVal) {
             $GRPPDFieldsNVP .= $GRPPDFieldsVal != '' ? '&' . strtoupper($GRPPDFieldsVar) . '=' . urlencode($GRPPDFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $GRPPDFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Update the status of a previously created recurring payments profile.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function ManageRecurringPaymentsProfileStatus($DataArray) {
         $MRPPSFieldsNVP = '&METHOD=ManageRecurringPaymentsProfileStatus';
-
         $MRPPSFields = isset($DataArray['MRPPSFields']) ? $DataArray['MRPPSFields'] : array();
         foreach ($MRPPSFields as $MRPPSFieldsVar => $MRPPSFieldsVal) {
             $MRPPSFieldsNVP .= $MRPPSFieldsVal != '' ? '&' . strtoupper($MRPPSFieldsVar) . '=' . urlencode($MRPPSFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $MRPPSFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Process the outstanding amount on a recurring payments profile.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function BillOutstandingAmount($DataArray) {
         $BOAFieldsNVP = '&METHOD=BillOutstandingAmount';
-
         $BOAFields = isset($DataArray['BOAFields']) ? $DataArray['BOAFields'] : array();
         foreach ($BOAFields as $BOAFieldsVar => $BOAFieldsVal) {
             $BOAFieldsNVP .= $BOAFieldsVal != '' ? '&' . strtoupper($BOAFieldsVar) . '=' . urlencode($BOAFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $BOAFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Update the details of a recurring payments profile.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function UpdateRecurringPaymentsProfile($DataArray) {
         $URPPFieldsNVP = '&METHOD=UpdateRecurringPaymentsProfile';
-
         $URPPFields = isset($DataArray['URPPFields']) ? $DataArray['URPPFields'] : array();
         foreach ($URPPFields as $URPPFieldsVar => $URPPFieldsVal) {
             $URPPFieldsNVP .= $URPPFieldsVal != '' ? '&' . strtoupper($URPPFieldsVar) . '=' . urlencode($URPPFieldsVal) : '';
         }
-
         $BillingAddress = isset($DataArray['BillingAddress']) ? $DataArray['BillingAddress'] : array();
         foreach ($BillingAddress as $BillingAddressVar => $BillingAddressVal) {
             $URPPFieldsNVP .= $BillingAddressVal != '' ? '&' . strtoupper($BillingAddressVar) . '=' . urlencode($BillingAddressVal) : '';
         }
-
         $ShippingAddress = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddress as $ShippingAddressVar => $ShippingAddressVal) {
             $URPPFieldsNVP .= $ShippingAddressVal != '' ? '&' . strtoupper($ShippingAddressVar) . '=' . urlencode($ShippingAddressVal) : '';
         }
-
         $BillingPeriod = isset($DataArray['BillingPeriod']) ? $DataArray['BillingPeriod'] : array();
         foreach ($BillingPeriod as $BillingPeriodVar => $BillingPeriodVal) {
             $URPPFieldsNVP .= $BillingPeriodVal != '' ? '&' . strtoupper($BillingPeriodVar) . '=' . urlencode($BillingPeriodVal) : '';
         }
-
         $CCDetails = isset($DataArray['CCDetails']) ? $DataArray['CCDetails'] : array();
         foreach ($CCDetails as $CCDetailsVar => $CCDetailsVal) {
             $URPPFieldsNVP .= $CCDetailsVal != '' ? '&' . strtoupper($CCDetailsVar) . '=' . urlencode($CCDetailsVal) : '';
         }
-
         $PayerInfo = isset($DataArray['PayerInfo']) ? $DataArray['PayerInfo'] : array();
         foreach ($PayerInfo as $PayerInfoVar => $PayerInfoVal) {
             $URPPFieldsNVP .= $PayerInfoVal != '' ? '&' . strtoupper($PayerInfoVar) . '=' . urlencode($PayerInfoVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $URPPFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Get the status of an existing recurring payments profile.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetRecurringPaymentsProfileStatus($ProfileID) {
         $GRPPDFields = array('profileid' => $ProfileID);
         $PayPalRequestData = array('GRPPDFields' => $GRPPDFields);
-
         $PayPalResult = $this->GetRecurringPaymentsProfileDetails($PayPalRequestData);
         $PayPalErrors = $PayPalResult['ERRORS'];
         $ProfileStatus = isset($PayPalResult['STATUS']) ? $PayPalResult['STATUS'] : 'Unknown';
-
         $ResponseArray = array(
             'PayPalResult' => $PayPalResult,
             'ProfileStatus' => $ProfileStatus
         );
-
         return $ResponseArray;
     }
 
-    /**
-     * Initiates the creation of a billing agreement.
-     *
-     * @access public
-     * @param Token
-     * @return array
-     *
-     */
     function CreateBillingAgreement($Token) {
         $CBAFieldsNVP = '&METHOD=CreateBillingAgreement&TOKEN=' . urlencode($Token);
-
         $NVPRequest = $this->NVPCredentials . $CBAFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Initiates the creation of a billing agreement.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function SetCustomerBillingAgreement($DataArray) {
         $SCBAFieldsNVP = '&METHOD=SetCustomerBillingAgreement';
         $BillingAgreementsNVP = '';
-
         $SCBAFields = isset($DataArray['SCBAFields']) ? $DataArray['SCBAFields'] : array();
         foreach ($SCBAFields as $SCBAFieldsVar => $SCBAFieldsVal) {
             $SCBAFieldsNVP .= $SCBAFieldsVal != '' ? '&' . strtoupper($SCBAFieldsVar) . '=' . urlencode($SCBAFieldsVal) : '';
         }
-
         $BillingAgreements = isset($DataArray['BillingAgreements']) ? $DataArray['BillingAgreements'] : array();
         $n = 0;
         foreach ($BillingAgreements as $BillingAgreementVar => $BillingAgreementVal) {
@@ -2196,286 +1546,180 @@ class PayPal_Express_PayPal {
             }
             $n++;
         }
-
         $NVPRequest = $this->NVPCredentials . $SCBAFieldsNVP . $BillingAgreementsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Obtains information about a billing agreement's PayPal account holder. 
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function GetBillingAgreementCustomerDetails($Token) {
         $GBACDFieldsNVP = '&METHOD=GetBillingAgreementCustomerDetails&TOKEN=' . $Token;
-
         $NVPRequest = $this->NVPCredentials . $GBACDFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Update details about a billing agreement. 
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function BillAgreementUpdate($DataArray) {
         $BAUFieldsNVP = '&METHOD=BillAgreementUpdate';
-
         $BAUFields = isset($DataArray['BAUFields']) ? $DataArray['BAUFields'] : array();
         foreach ($BAUFields as $BAUFieldsVar => $BAUFieldsVal) {
             $BAUFieldsNVP .= $BAUFieldsVal != '' ? '&' . strtoupper($BAUFieldsVar) . '=' . urlencode($BAUFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $BAUFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Setup the mobile checkout flow.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function SetMobileCheckout($DataArray) {
         $SMCFieldsNVP = '&METHOD=SetMobileCheckout';
-
         $SMCFields = isset($DataArray['SMCFields']) ? $DataArray['SMCFields'] : array();
         foreach ($SMCFields as $SMCFieldsVar => $SMCFieldsVal) {
             $SMCFieldsNVP .= $SMCFieldsVal != '' ? '&' . strtoupper($SMCFieldsVar) . '=' . urlencode($SMCFieldsVal) : '';
         }
-
         $ShippingAddress = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddress as $ShippingAddressVar => $ShippingAddressVal) {
             $SMCFieldsNVP .= $SMCFieldsVal != '' ? '&' . strtoupper($ShippingAddressVar) . '=' . urlencode($ShippingAddressVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $SMCFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Finalize and process the sale from a mobile checkout flow.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function DoMobileCheckoutPayment($DataArray) {
         $DMCPFieldsNVP = '&METHOD=DoMobileCheckoutPayment';
-
         $DMCPFields = isset($DataArray['DMCPFields']) ? $DataArray['DMCPFields'] : array();
         foreach ($DMCPFields as $DMCPFieldsVar => $DMCPFieldsVal) {
             $DMCPFieldsNVP .= $DMCPFieldsVal != '' ? '&' . strtoupper($DMCPFieldsVar) . '=' . urlencode($DMCPFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $DMCPFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Set authorization params
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function SetAuthFlowParam($DataArray) {
         $SetAuthFlowParamFieldsNVP = '&METHOD=SetAuthFlowParam';
-
-        // SetAuthFlowParam Fields
         $SetAuthFlowParamFields = isset($DataArray['SetAuthFlowParamFields']) ? $DataArray['SetAuthFlowParamFields'] : array();
         foreach ($SetAuthFlowParamFields as $SetAuthFlowParamFieldsVar => $SetAuthFlowParamFieldsVal) {
             $SetAuthFlowParamFieldsNVP .= $SetAuthFlowParamFieldsVal != '' ? '&' . strtoupper($SetAuthFlowParamFieldsVar) . '=' . urlencode($SetAuthFlowParamFieldsVal) : '';
         }
-
-        // ShippingAddress Fields
         $ShippingAddressFields = isset($DataArray['ShippingAddress']) ? $DataArray['ShippingAddress'] : array();
         foreach ($ShippingAddressFields as $ShippingAddressFieldsVar => $ShippingAddressFieldsVal) {
             $SetAuthFlowParamFieldsNVP .= $ShippingAddressFieldsVal != '' ? '&' . strtoupper($ShippingAddressFieldsVar) . '=' . urlencode($ShippingAddressFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $SetAuthFlowParamFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
         $Token = isset($NVPResponseArray['TOKEN']) ? $NVPResponseArray['TOKEN'] : '';
         $RedirectURL = $Token != '' ? 'https://www.paypal.com/us/cgi-bin/webscr?cmd=_account-authenticate-login&token=' . $Token : '';
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REDIRECTURL'] = $RedirectURL;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Get authorization details
-     *
-     * @access	public
-     * @param	string	token
-     * @return	array
-     */
     function GetAuthDetails($Token) {
         $GetAuthDetailsFieldsNVP = '&METHOD=GetAuthDetails&TOKEN=' . $Token;
-
         $NVPRequest = $this->NVPCredentials . $GetAuthDetailsFieldsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Retrieve the current API permissions granted for the application.
-     *
-     * @access	public
-     * @param	string	token
-     * @return	array
-     */
     function GetAccessPermissionsDetails($Token) {
         $GetAccessPermissionsDetailsNVP = '&METHOD=GetAccessPermissionsDetails&TOKEN=' . $Token;
-
         $NVPRequest = $this->NVPCredentials . $GetAccessPermissionsDetailsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $Permissions = array();
         $n = 0;
         while (isset($NVPResponseArray['L_ACCESSPERMISSIONNAME' . $n . ''])) {
             $LName = isset($NVPResponseArray['L_ACCESSPERMISSIONNAME' . $n . '']) ? $NVPResponseArray['L_ACCESSPERMISSIONNAME' . $n . ''] : '';
             $LStatus = isset($NVPResponseArray['L_ACCESSPERMISSIONSTATUS' . $n . '']) ? $NVPResponseArray['L_ACCESSPERMISSIONSTATUS' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_ACCESSPERMISSIONNAME' => $LName,
                 'L_ACCESSPERMISSIONSTATUS' => $LStatus
             );
-
             array_push($ActivePermissions, $CurrentItem);
             $n++;
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['Permissions'] = $Permissions;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Set the access permissions for an application on a 3rd party user's account.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function SetAccessPermissions($DataArray) {
         $SetAccessPermissionsNVP = '&METHOD=SetAccessPermissions';
-
-        // SetAccessPermissions Fields
         $SetAccessPermissionsFields = isset($DataArray['SetAccessPermissionsFields']) ? $DataArray['SetAccessPermissionsFields'] : array();
         foreach ($SetAccessPermissionsFields as $SetAccessPermissionsFieldsVar => $SetAccessPermissionsFieldsVal) {
             $SetAccessPermissionsNVP .= $SetAccessPermissionsFieldsVal != '' ? '&' . strtoupper($SetAccessPermissionsFieldsVar) . '=' . urlencode($SetAccessPermissionsFieldsVal) : '';
         }
-
         $n = 0;
         $RequiredPermissions = isset($DataArray['RequiredPermissions']) ? $DataArray['RequiredPermissions'] : array();
         foreach ($RequiredPermissions as $RequiredPermission) {
             $SetAccessPermissionsNVP .= '&L_REQUIREDACCESSPERMISSIONS' . $n . '=' . urlencode($RequiredPermission);
             $n++;
         }
-
         $n = 0;
         $OptionalPermissions = isset($DataArray['OptionalPermissions']) ? $DataArray['OptionalPermissions'] : array();
         foreach ($OptionalPermissions as $OptionalPermission) {
             $SetAccessPermissionsNVP .= '&L_OPTIONALACCESSPERMISSIONS' . $n . '=' . urlencode($OptionalPermission);
             $n++;
         }
-
         $NVPRequest = $this->NVPCredentials . $SetAccessPermissionsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
         $Token = isset($NVPResponseArray['TOKEN']) ? $NVPResponseArray['TOKEN'] : '';
-
         if ($this->Sandbox) {
             $RedirectURL = $Token != '' ? 'https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=_access-permission-login&token=' . $Token : '';
             $LogoutRedirectURL = $Token != '' ? 'https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=_access-permission-logout&token=' . $Token : '';
@@ -2483,66 +1727,40 @@ class PayPal_Express_PayPal {
             $RedirectURL = $Token != '' ? 'https://www.paypal.com/us/cgi-bin/webscr?cmd=_access-permission-login&token=' . $Token : '';
             $LogoutRedirectURL = $Token != '' ? 'https://www.paypal.com/us/cgi-bin/webscr?cmd=_access-permission-logout&token=' . $Token : '';
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REDIRECTURL'] = $RedirectURL;
         $NVPResponseArray['LOGOUTREDIRECTURL'] = $LogoutRedirectURL;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * Update the access permissions for an application on a 3rd party user's account.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function UpdateAccessPermissions($PayerID) {
         $UpdateAcccessPermissionsNVP = '&METHOD=UpdateAccessPermissions&PAYERID=' . $PayerID;
-
         $NVPRequest = $this->NVPCredentials . $UpdateAcccessPermissionsNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 
-    /**
-     * The request contains optional fields that are not currently used.  
-     * All buttons are automatically requested.
-     *
-     * @access	public
-     * @param	array	call config data
-     * @return	array
-     */
     function BMButtonSearch($DataArray) {
         $BMButtonSearchNVP = '&METHOD=BMButtonSearch';
-
-        // BMButtonSearch Fields
         $BMButtonSearchFields = isset($DataArray['BMButtonSearchFields']) ? $DataArray['BMButtonSearchFields'] : array();
         foreach ($BMButtonSearchFields as $BMButtonSearchFieldsVar => $BMButtonSearchFieldsVal) {
             $BMButtonSearchNVP .= $BMButtonSearchFieldsVal != '' ? '&' . strtoupper($BMButtonSearchFieldsVar) . '=' . urlencode($BMButtonSearchFieldsVal) : '';
         }
-
         $NVPRequest = $this->NVPCredentials . $BMButtonSearchNVP;
         $NVPResponse = $this->CURLRequest($NVPRequest);
         $NVPRequestArray = $this->NVPToArray($NVPRequest);
         $NVPResponseArray = $this->NVPToArray($NVPResponse);
-
         $Errors = $this->GetErrors($NVPResponseArray);
-
         $SearchResults = array();
         $n = 0;
         while (isset($NVPResponseArray['L_HOSTEDBUTTONID' . $n . ''])) {
@@ -2550,24 +1768,20 @@ class PayPal_Express_PayPal {
             $LButtonType = isset($NVPResponseArray['L_BUTTONTYPE' . $n . '']) ? $NVPResponseArray['L_BUTTONTYPE' . $n . ''] : '';
             $LItemName = isset($NVPResponseArray['L_ITEMNAME' . $n . '']) ? $NVPResponseArray['L_ITEMNAME' . $n . ''] : '';
             $LModifyDate = isset($NVPResponseArray['L_MODIFYDATE' . $n . '']) ? $NVPResponseArray['L_MODIFYDATE' . $n . ''] : '';
-
             $CurrentItem = array(
                 'L_HOSTEDBUTTONID' => $LHostedButtonID,
                 'L_BUTTONTYPE' => $LButtonType,
                 'L_ITEMNAME' => $LItemName,
                 'L_MODIFYDATE' => $LModifyDate
             );
-
             array_push($SearchResults, $CurrentItem);
             $n++;
         }
-
         $NVPResponseArray['ERRORS'] = $Errors;
         $NVPResponseArray['SEARCHRESULTS'] = $SearchResults;
         $NVPResponseArray['REQUESTDATA'] = $NVPRequestArray;
         $NVPResponseArray['RAWREQUEST'] = $NVPRequest;
         $NVPResponseArray['RAWRESPONSE'] = $NVPResponse;
-
         return $NVPResponseArray;
     }
 

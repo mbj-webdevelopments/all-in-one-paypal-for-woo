@@ -1,7 +1,9 @@
 <?php
 global $woocommerce, $pp_settings;
 $pp_settings = get_option('woocommerce_paypal_express_settings');
+
 class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends WC_Payment_Gateway {
+
     public function __construct() {
         $this->id = 'paypal_express';
         $this->method_title = __('PayPal Express Checkout ', 'paypal-for-woocommerce');
@@ -178,15 +180,17 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
 
     function add_log($message) {
         if ($this->debug == 'yes') {
-            if (empty($this->log))
+            if (!isset($this->log)) {
                 $this->log = new WC_Logger();
+            }
             $this->log->add('paypal_express', $message);
         }
     }
 
     function is_ssl() {
-        if (is_ssl() || get_option('woocommerce_force_ssl_checkout') == 'yes' || class_exists('WordPressHTTPS'))
+        if (is_ssl() || get_option('woocommerce_force_ssl_checkout') == 'yes' || class_exists('WordPressHTTPS')) {
             return true;
+        }
         return false;
     }
 
@@ -475,8 +479,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         if (WC()->cart->total > 0) {
             wp_enqueue_script('paypal_express_button');
             $payment_gateways = WC()->payment_gateways->get_available_payment_gateways();
-            unset($payment_gateways['paypal_pro']);
-            unset($payment_gateways['paypal_pro_payflow']);
             echo '<div id="checkout_paypal_message" class="woocommerce-info info">';
             echo '<div id="paypal_box_button">';
             if (empty($pp_settings['checkout_with_pp_button_type']))
@@ -1562,8 +1564,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         echo "<style>table.cart td.actions .input-text, table.cart td.actions .button, table.cart td.actions .checkout-button {margin-bottom: 0.53em !important}</style>";
         if ((@$pp_settings['enabled'] == 'yes') && 0 < WC()->cart->total) {
             $payment_gateways = WC()->payment_gateways->get_available_payment_gateways();
-            unset($payment_gateways['paypal_pro']);
-            unset($payment_gateways['paypal_pro_payflow']);
             if ((isset($pp_settings['show_on_checkout']) && $pp_settings['show_on_checkout'] == 'regular')) {
                 $payment_gateways_count = 1;
             }
@@ -1589,8 +1589,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
     public function woocommerce_paypal_express_checkout_button_paypal_express() {
         global $pp_settings, $pp_pro, $pp_payflow;
         $payment_gateways = WC()->payment_gateways->get_available_payment_gateways();
-        unset($payment_gateways['paypal_pro']);
-        unset($payment_gateways['paypal_pro_payflow']);
         echo '<div class="clear"></div>';
         if (@$pp_settings['enabled'] == 'yes' && (empty($pp_settings['show_on_cart']) || $pp_settings['show_on_cart'] == 'yes') && 0 < WC()->cart->total) {
             echo '<div class="paypal_box_button" style="position: relative;">';
