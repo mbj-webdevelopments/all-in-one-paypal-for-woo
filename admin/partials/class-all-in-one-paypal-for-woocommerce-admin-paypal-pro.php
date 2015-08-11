@@ -14,7 +14,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro extends WC_
         $this->api_version = '119';
         $this->method_title = __('PayPal Pro', 'all-in-one-paypal-for-woocommerce');
         $this->method_description = __('PayPal Pro works by adding credit card fields on the checkout and then sending the details to PayPal for verification.', 'all-in-one-paypal-for-woocommerce');
-        $this->icon = apply_filters('woocommerce_paypal_pro_icon', plugins_url('/assets/images/cards.png', plugin_basename(dirname(__FILE__))));
+        $this->icon = apply_filters('woocommerce_paypal_pro_icon', plugins_url('/partials/images/cards.png', plugin_basename(dirname(__FILE__))));
         $this->has_fields = true;
         $this->supports = array(
             'products',

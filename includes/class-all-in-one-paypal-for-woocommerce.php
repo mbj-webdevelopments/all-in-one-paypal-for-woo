@@ -171,6 +171,17 @@ class All_In_One_Paypal_For_Woocommerce {
         $this->loader->add_action('woocommerce_checkout_process', $plugin_admin, 'apap_cart_validation_for_rec_limit');
         $this->loader->add_action('product_cat_add_form_fields', $plugin_admin, 'apap_category_new_fields');
         $this->loader->add_action('product_cat_edit_form_fields', $plugin_admin, 'apap_category_edit_fields', 10, 2);
+
+        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+
+        $this->loader->add_filter('woocommerce_paypal_args', $plugin_admin, 'paypal_express_checkout_woocommerce_standard_parameters');
+        $this->loader->add_action('admin_notices', $plugin_admin, 'admin_notices');
+        $this->loader->add_action('admin_init', $plugin_admin, 'set_ignore_tag');
+        $this->loader->add_action('parse_request', $plugin_admin, 'woocommerce_paypal_express_review_order_page_paypal_express');
+        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'onetarek_wpmut_admin_scripts');
+        $this->loader->add_action('admin_print_styles', $plugin_admin, 'onetarek_wpmut_admin_styles');
+        remove_action('woocommerce_proceed_to_checkout', 'woocommerce_paypal_express_checkout_button', 12);
     }
 
     /**
@@ -187,6 +198,21 @@ class All_In_One_Paypal_For_Woocommerce {
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         $this->loader->add_action('get_header', $plugin_public, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_paypal_return', 11);
+
+        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'woocommerce_paypal_express_init_styles', 12);
+        $this->loader->add_filter('woocommerce_product_title', $plugin_public, 'woocommerce_product_title');
+        $this->loader->add_action('woocommerce_after_add_to_cart_button', $plugin_public, 'buy_now_button');
+        $this->loader->add_action('woocommerce_after_mini_cart', $plugin_public, 'mini_cart_button');
+        $this->loader->add_action('woocommerce_add_to_cart_redirect', $plugin_public, 'add_to_cart_redirect');
+        $this->loader->add_action('woocommerce_after_single_variation', $plugin_public, 'buy_now_button_js');
+        $this->loader->add_action('woocommerce_before_add_to_cart_button', $plugin_public, 'add_div_before_add_to_cart_button', 25);
+        $this->loader->add_action('woocommerce_after_add_to_cart_button', $plugin_public, 'add_div_after_add_to_cart_button', 35);
+
+        remove_action('init', 'woocommerce_paypal_express_review_order_page');
+        remove_shortcode('woocommerce_review_order');
+        add_shortcode('woocommerce_review_order', array($plugin_public, 'get_woocommerce_review_order_paypal_express'));
     }
 
     /**

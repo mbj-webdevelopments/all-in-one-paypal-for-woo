@@ -97,6 +97,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-pro-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-pro.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-adaptive-payments.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/class-all-in-one-paypal-for-woocommerce-admin-paypal-express.php';
         require_once( 'partials/lib/paypal-digital-goods/paypal-purchase.class.php' );
         require_once( 'partials/lib/paypal-digital-goods/paypal-subscription.class.php' );
     }
@@ -108,6 +109,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
         $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow';
         $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro';
         $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Adaptive_Payments';
+        $methods[] = 'All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express';
         return $methods;
     }
 
@@ -1021,6 +1023,52 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
             </tr>
             <?php
         }
+    }
+
+    public function admin_notices() {
+        global $current_user, $pp_settings;
+        $user_id = $current_user->ID;
+        $pp_standard = get_option('woocommerce_paypal_settings');
+        do_action('mbj_admin_notices', $pp_standard);
+        if (@$pp_settings['enabled'] == 'yes' && @$pp_standard['enabled'] == 'yes' && !get_user_meta($user_id, 'ignore_pp_check')) {
+            echo '<div class="error"><p>' . sprintf(__('You currently have both PayPal (standard) and Express Checkout enabled.  It is recommended that you disable the standard PayPal from <a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_paypal">the settings page</a> when using Express Checkout. | <a href=%s>%s</a>', 'paypal-for-woocommerce'), '"' . add_query_arg("ignore_pp_check", 0) . '"', __("Hide this notice", 'paypal-for-woocommerce')) . '</p></div>';
+        }
+        if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins'))) && !get_user_meta($user_id, 'ignore_pp_woo') && !is_plugin_active_for_network('woocommerce/woocommerce.php')) {
+            echo '<div class="error"><p>' . sprintf(__("WooCommerce PayPal Payments requires WooCommerce plugin to work normally. Please activate it or install it from <a href='http://wordpress.org/plugins/woocommerce/' target='_blank'>here</a>. | <a href=%s>%s</a>", 'paypal-for-woocommerce'), '"' . add_query_arg("ignore_pp_woo", 0) . '"', __("Hide this notice", 'paypal-for-woocommerce')) . '</p></div>';
+        }
+    }
+
+    public function set_ignore_tag() {
+        global $current_user;
+        $plugin = plugin_basename(__FILE__);
+        $plugin_data = get_plugin_data(__FILE__, false);
+        if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+            deactivate_plugins(PEC_PLUGIN_DIR . '/paypal-express-checkout-woocommerce.php');
+            wp_die("<strong>PayPal Pro for WooCommerce</strong> requires <strong>WooCommerce</strong> plugin to work normally. Please activate it or install it.<br /><br />Back to the WordPress <a href='" . get_admin_url(null, 'plugins.php') . "'>Plugins page</a>.");
+        }
+        $user_id = $current_user->ID;
+        $notices = array('ignore_pp_ssl', 'ignore_pp_sandbox', 'ignore_pp_woo', 'ignore_pp_check', 'ignore_pp_donate');
+        foreach ($notices as $notice)
+            if (isset($_GET[$notice]) && '0' == $_GET[$notice]) {
+                add_user_meta($user_id, $notice, 'true', true);
+            }
+    }
+
+    public function woocommerce_paypal_express_review_order_page_paypal_express() {
+        if (!empty($_GET['pp_action']) && $_GET['pp_action'] == 'revieworder') {
+            $woocommerce_ppe = new All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express();
+            $woocommerce_ppe->paypal_express_checkout();
+        }
+    }
+
+    public function onetarek_wpmut_admin_scripts() {
+        $dir = plugin_dir_path(__FILE__);
+        wp_enqueue_media();
+        wp_enqueue_script('jquery');
+    }
+
+    public function onetarek_wpmut_admin_styles() {
+        wp_enqueue_style('thickbox');
     }
 
 }

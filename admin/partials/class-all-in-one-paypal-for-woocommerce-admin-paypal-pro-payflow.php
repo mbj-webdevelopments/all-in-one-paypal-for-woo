@@ -13,7 +13,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow ext
         $this->id = 'paypal_pro_payflow';
         $this->method_title = __('PayPal Pro PayFlow', 'all-in-one-paypal-for-woocommerce');
         $this->method_description = __('PayPal Pro PayFlow Edition works by adding credit card fields on the checkout and then sending the details to PayPal for verification.', 'all-in-one-paypal-for-woocommerce');
-        $this->icon = apply_filters('woocommerce_paypal_pro_payflow_icon', WP_PLUGIN_URL . "/" . plugin_basename(dirname(dirname(__FILE__))) . '/assets/images/cards.png');
+        $this->icon = apply_filters('woocommerce_paypal_pro_payflow_icon', WP_PLUGIN_URL . "/" . plugin_basename(dirname(dirname(__FILE__))) . '/partials/images/cards.png');
         $this->has_fields = true;
         $this->supports = array(
             'products',

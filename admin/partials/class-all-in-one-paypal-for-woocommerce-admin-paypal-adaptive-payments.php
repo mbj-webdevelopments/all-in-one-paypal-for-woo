@@ -13,7 +13,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Adaptive_Paymen
         $this->id = 'paypal_adaptive_payment';
         $this->method_title = 'PayPal Adaptive Split Payment';
         $this->has_fields = true;
-        $this->icon = plugins_url('images/paypal.jpg', __FILE__);
+        $this->icon = plugins_url('images/paypal.png', __FILE__);
         $this->init_form_fields();
         $this->init_settings();
         $this->split_by = $this->get_option('_split_by');
