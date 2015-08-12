@@ -62,6 +62,9 @@ class All_In_One_Paypal_For_Woocommerce {
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
+        add_action('init', array($this, 'add_endpoint'), 0);
+        add_action('parse_request', array($this, 'handle_api_requests'), 0);
+        add_action('all_in_one_paypal_for_woocommerce_api_ipn_handler', array($this, 'all_in_one_paypal_for_woocommerce_api_ipn_handler'));
     }
 
     /**
@@ -104,6 +107,9 @@ class All_In_One_Paypal_For_Woocommerce {
          * side of the site.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-all-in-one-paypal-for-woocommerce-public.php';
+        
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/autoresponder/class-all-in-one-paypal-for-woocommerce-wordpress-list.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-all-in-one-paypal-for-woocommerce-mailchimp-helper.php';
 
         $this->loader = new All_In_One_Paypal_For_Woocommerce_Loader();
     }
@@ -238,5 +244,62 @@ class All_In_One_Paypal_For_Woocommerce {
     public function get_version() {
         return $this->version;
     }
+    
+    public function add_endpoint() {
 
+       
+        add_rewrite_endpoint('All_In_One_Paypal_For_Woocommerce', EP_ALL);
+    }
+
+    public function all_in_one_paypal_for_woocommerce_api_ipn_handler() {
+
+        /**
+         * The class responsible for defining all actions related to paypal ipn listener 
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-all-in-one-paypal-for-woocommerce-paypal-listner.php';
+        $All_In_One_Paypal_For_Woocommerce_PayPal_listner = new All_In_One_Paypal_For_Woocommerce_PayPal_listner();
+
+        /**
+         * The check_ipn_request function check and validation for ipn response
+         */
+        if ($All_In_One_Paypal_For_Woocommerce_PayPal_listner->check_ipn_request()) {
+            $All_In_One_Paypal_For_Woocommerce_PayPal_listner->successful_request($IPN_status = true);
+        } else {
+            $All_In_One_Paypal_For_Woocommerce_PayPal_listner->successful_request($IPN_status = false);
+        }
+    }
+    
+    public function handle_api_requests() {
+        global $wp;
+
+        if (isset($_GET['action']) && $_GET['action'] == 'ipn_handler') {
+            $wp->query_vars['All_In_One_Paypal_For_Woocommerce'] = $_GET['action'];
+        }
+
+       
+        if (!empty($wp->query_vars['All_In_One_Paypal_For_Woocommerce'])) {
+
+            // Buffer, we won't want any output here
+            ob_start();
+
+            // Get API trigger
+            $api = strtolower(esc_attr($wp->query_vars['All_In_One_Paypal_For_Woocommerce']));
+
+            // Trigger actions
+            do_action('all_in_one_paypal_for_woocommerce_api_' . $api);
+
+            // Done, clear buffer and exit
+            ob_end_clean();
+            die('1');
+        }
+    }
+
+    /**
+     * add_endpoint function.
+     *
+     * @access public
+     * @since 1.0.0
+     * @return void
+     */
+   
 }

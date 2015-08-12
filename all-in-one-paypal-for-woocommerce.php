@@ -26,6 +26,13 @@ if (!defined('WPINC')) {
     die;
 }
 
+if (!defined('PDW_PLUGIN_URL')) {
+    define('PDW_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+if (!defined('PDW_PLUGIN_DIR')) {
+    define('PDW_PLUGIN_DIR', dirname(__FILE__));
+}
+
 if (!defined('PPFW_PLUGIN_DIR')) {
     define('PPFW_PLUGIN_DIR', dirname(__FILE__));
 }

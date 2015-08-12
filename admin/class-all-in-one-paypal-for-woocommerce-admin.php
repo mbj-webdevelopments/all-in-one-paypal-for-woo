@@ -41,6 +41,18 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+        $this->load_dependencies();
+    }
+
+    private function load_dependencies() {
+        /**
+         * The class responsible for defining all actions that occur in the Dashboard
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/autoresponder/class-all-in-one-paypal-for-woocommerce-admin-display.php';
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/autoresponder/class-all-in-one-paypal-for-woocommerce-general-setting.php';
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/autoresponder/class-all-in-one-paypal-for-woocommerce-html-output.php';
     }
 
     /**
@@ -966,13 +978,13 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
         for ($i = 1; $i <= 6; $i++) {
             ?>
             <div class = "form-field">
-                <?php
-                if (isset($term->term_id)) {
-                    $term_value = $term->term_id;
-                } else {
-                    $term_value = "";
-                }
-                ?>
+            <?php
+            if (isset($term->term_id)) {
+                $term_value = $term->term_id;
+            } else {
+                $term_value = "";
+            }
+            ?>
                 <label for = "<?php echo 'receiver_' . $i . ''; ?>">Enable Receiver <?php echo $i; ?></label>
                 <input style="width: auto;" id = "<?php echo '_apap_rec_' . $i . '_enable'; ?>" type = "checkbox" aria-required = "false" size = "40" value = "<?php echo get_woocommerce_term_meta($term_value, '_apap_rec_' . $i . '_enable', true); ?>"<?php checked("yes", get_woocommerce_term_meta($term_value, '_apap_rec_' . $i . '_enable', true)); ?> name = "<?php echo '_apap_rec_' . $i . '_enable'; ?>">
                 <p class = "description">Enable Receiver <?php echo $i; ?></p>
