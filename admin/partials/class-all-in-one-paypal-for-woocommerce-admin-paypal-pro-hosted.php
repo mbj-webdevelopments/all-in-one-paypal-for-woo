@@ -238,6 +238,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
         $cart_discount = $this->is_wc_version_greater_2_3() ? 0 : WC()->cart->get_order_discount_total(); 
         $params = array('business' => $this->email,
             'bn' => 'mbjtechnolabs_SP',
+            'BUTTONLANGUAGE' => defined('WPLANG') ? WPLANG : '',
             'buyer_email' => $order->billing_email,
             'cancel_return' => str_replace("&amp;", "&", $order->get_cancel_order_url_raw()),
             'currency_code' => get_woocommerce_currency(),
