@@ -299,7 +299,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow ext
             'method' => 'POST',
             'body' => urldecode(http_build_query(apply_filters('all-in-one-paypal-for-woocommerce_payflow_request', $post_data, $order), null, '&')),
             'timeout' => 70,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
         ));
         if (is_wp_error($response)) {
@@ -422,7 +422,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow ext
                 'method' => 'POST',
                 'body' => urldecode(http_build_query(apply_filters('all-in-one-paypal-for-woocommerce_payflow_request', $post_data, $order), null, '&')),
                 'timeout' => 70,
-                'user-agent' => 'WooCommerce',
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1'
             ));
             if (is_wp_error($response)) {
@@ -487,7 +487,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow ext
             'method' => 'POST',
             'body' => urldecode(http_build_query($post_data, null, '&')),
             'timeout' => 70,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
         ));
         if (is_wp_error($response)) {
@@ -534,7 +534,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Pro_PayFlow ext
             'method' => 'POST',
             'body' => urldecode(http_build_query($post_data, null, '&')),
             'timeout' => 70,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
         ));
         parse_str($response['body'], $parsed_response);

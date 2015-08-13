@@ -61,7 +61,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/all-in-one-paypal-for-woocommerce-admin.css', array(), $this->version, 'all');
         wp_enqueue_style($this->plugin_name . 'activation', plugin_dir_url(__FILE__) . 'css/all-in-one-paypal-for-woocommerce-public-activation.css', array(), $this->version, 'all');
     }
 
@@ -180,7 +179,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
                 ),
                 'body' => $post_data,
                 'timeout' => 70,
-                'user-agent' => 'WooCommerce',
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1'
             ));
             if (is_wp_error($response)) {
@@ -209,7 +208,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
                 'method' => 'POST',
                 'body' => urldecode(http_build_query($post_data, null, '&')),
                 'timeout' => 70,
-                'user-agent' => 'WooCommerce',
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1'
             ));
             parse_str($response['body'], $parsed_response);
@@ -249,7 +248,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
                 ),
                 'body' => $post_data,
                 'timeout' => 70,
-                'user-agent' => 'WooCommerce',
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1'
             ));
             if (is_wp_error($response)) {
@@ -275,7 +274,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin {
                 'method' => 'POST',
                 'body' => urldecode(http_build_query($post_data, null, '&')),
                 'timeout' => 70,
-                'user-agent' => 'WooCommerce',
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1'
             ));
             parse_str($response['body'], $parsed_response);

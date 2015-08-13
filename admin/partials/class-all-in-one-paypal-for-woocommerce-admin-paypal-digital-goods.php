@@ -203,8 +203,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods extends WC_Pa
     public function admin_options() {
         ?>
         <h3><?php _e('PayPal Digital Goods', 'all-in-one-paypal-for-woocommerce'); ?></h3>
-        <p><?php _e('PayPal Digital Goods offers in-context payments via PayPal for orders with your store.', 'all-in-one-paypal-for-woocommerce'); ?></p>
-        <p><?php printf(__('If you have not already done so, you need to sign up for a PayPal business account and set it to use Digital Goods with Express Checkout. Learn how to configure your account to use Digital Goods in %sthis tutorial%s.', 'all-in-one-paypal-for-woocommerce'), '<a href="http://docs.woothemes.com/document/paypal-digital-goods-for-express-checkout-gateway/" target="_blank" tabindex="-1">', '</a>'); ?></p>
         <table class="form-table">
             <?php if (!$this->is_valid_currency()) : ?>
                 <div class="inline error">
@@ -951,7 +949,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods extends WC_Pa
             'method' => 'POST',
             'body' => $post_data,
             'timeout' => 70,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
                 )
         );
@@ -959,7 +957,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_Paypal_Digital_Goods extends WC_Pa
             return $response;
         }
         if (empty($response['body'])) {
-            return new WP_Error('paypal-error', __('Empty Paypal response.', 'woocommerce'));
+            return new WP_Error('paypal-error', __('Empty Paypal response.', 'all-in-one-paypal-for-woocommerce'));
         }
         parse_str($response['body'], $parsed_response);
         switch (strtolower($parsed_response['ACK'])) {

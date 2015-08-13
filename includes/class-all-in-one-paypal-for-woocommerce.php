@@ -181,11 +181,7 @@ class All_In_One_Paypal_For_Woocommerce {
     private function define_public_hooks() {
 
         $plugin_public = new All_In_One_Paypal_For_Woocommerce_Public($this->get_plugin_name(), $this->get_version());
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         $this->loader->add_action('get_header', $plugin_public, 'all_in_one_paypal_for_woocommerce_paypal_digital_goods_paypal_return', 11);
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'woocommerce_paypal_express_init_styles', 12);
         $this->loader->add_filter('woocommerce_product_title', $plugin_public, 'woocommerce_product_title');
         $this->loader->add_action('woocommerce_after_add_to_cart_button', $plugin_public, 'buy_now_button');

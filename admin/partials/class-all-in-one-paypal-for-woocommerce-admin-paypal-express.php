@@ -209,15 +209,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
             'sort_order' => 'ASC',
             'sort_column' => 'post_title',
             'hierarchical' => 1,
-            'exclude' => '',
-            'include' => '',
-            'meta_key' => '',
-            'meta_value' => '',
-            'authors' => '',
             'child_of' => 0,
             'parent' => -1,
             'exclude_tree' => '',
-            'number' => '',
             'offset' => 0,
             'post_type' => 'page',
             'post_status' => 'publish'
@@ -232,7 +226,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
                 'title' => __('Enable/Disable', 'paypal-for-woocommerce'),
                 'label' => __('Enable PayPal Express', 'paypal-for-woocommerce'),
                 'type' => 'checkbox',
-                'description' => '',
                 'default' => 'no'
             ),
             'title' => array(
@@ -1083,25 +1076,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
             $quantity = absint($values['quantity']);
             $Item = array(
                 'name' => $values['name'],
-                'desc' => '',
                 'amt' => round($values['line_subtotal'] / $quantity, 2),
                 'number' => $sku,
                 'qty' => $quantity,
-                'taxamt' => '',
-                'itemurl' => '',
-                'itemcategory' => '',
-                'itemweightvalue' => '',
-                'itemweightunit' => '',
-                'itemheightvalue' => '',
-                'itemheightunit' => '',
-                'itemwidthvalue' => '',
-                'itemwidthunit' => '',
-                'itemlengthvalue' => '',
-                'itemlengthunit' => '',
-                'ebayitemnumber' => '',
-                'ebayitemauctiontxnid' => '',
-                'ebayitemorderid' => '',
-                'ebayitemcartid' => ''
             );
             array_push($PaymentOrderItems, $Item);
             $total_items += $values['line_subtotal'];
@@ -1110,25 +1087,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         foreach (WC()->cart->get_fees() as $fee) {
             $Item = array(
                 'name' => $fee->name,
-                'desc' => '',
                 'amt' => number_format($fee->amount, 2, '.', ''),
                 'number' => $fee->id,
                 'qty' => 1,
-                'taxamt' => '',
-                'itemurl' => '',
-                'itemcategory' => '',
-                'itemweightvalue' => '',
-                'itemweightunit' => '',
-                'itemheightvalue' => '',
-                'itemheightunit' => '',
-                'itemwidthvalue' => '',
-                'itemwidthunit' => '',
-                'itemlengthvalue' => '',
-                'itemlengthunit' => '',
-                'ebayitemnumber' => '',
-                'ebayitemauctiontxnid' => '',
-                'ebayitemorderid' => '',
-                'ebayitemcartid' => ''
             );
             array_push($PaymentOrderItems, $Item);
             $total_items += $fee->amount * $Item['qty'];
@@ -1177,27 +1138,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
             $Payment['itemamt'] = round($total_items + $total_discount, 2);
         }
         array_push($Payments, $Payment);
-        $BuyerDetails = array(
-            'buyerid' => '',
-            'buyerusername' => '',
-            'buyerregistrationdate' => ''
-        );
+       
         $ShippingOptions = array();
-        $Option = array(
-            'l_shippingoptionisdefault' => '',
-            'l_shippingoptionname' => '',
-            'l_shippingoptionlabel' => '',
-            'l_shippingoptionamount' => ''
-        );
-        array_push($ShippingOptions, $Option);
         $BillingAgreements = array();
-        $Item = array(
-            'l_billingtype' => '',
-            'l_billingagreementdescription' => '',
-            'l_paymenttype' => '',
-            'l_billingagreementcustom' => ''
-        );
-        array_push($BillingAgreements, $Item);
         $PayPalRequestData = array(
             'SECFields' => $SECFields,
             'SurveyChoices' => $SurveyChoices,
@@ -1292,21 +1235,11 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         $DECPFields = array(
             'token' => urlencode($this->get_session('TOKEN')),
             'payerid' => urlencode($this->get_session('payer_id')),
-            'returnfmfdetails' => '',
-            'buyermarketingemail' => '',
-            'surveyquestion' => '',
-            'surveychoiceselected' => '',
-            'allowedpaymentmethod' => ''
         );
         $Payments = array();
         $Payment = array(
             'amt' => number_format($FinalPaymentAmt, 2, '.', ''),
             'currencycode' => get_woocommerce_currency(),
-            'shippingdiscamt' => '',
-            'insuranceoptionoffered' => '',
-            'handlingamt' => '',
-            'desc' => '',
-            'custom' => '',
             'invnum' => $this->invoice_id_prefix . $invoice_number,
             'notifyurl' => '',
             'shiptoname' => $shipping_first_name . ' ' . $shipping_last_name,
@@ -1316,16 +1249,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
             'shiptostate' => $shipping_state,
             'shiptozip' => $shipping_postcode,
             'shiptocountrycode' => $shipping_country,
-            'shiptophonenum' => '',
             'notetext' => $this->get_session('customer_notes'),
             'allowedpaymentmethod' => '',
             'paymentaction' => $this->payment_action == 'Authorization' ? 'Authorization' : 'Sale',
-            'paymentrequestid' => '',
-            'sellerpaypalaccountid' => '',
-            'sellerid' => '',
-            'sellerusername' => '',
-            'sellerregistrationdate' => '',
-            'softdescriptor' => ''
         );
         $PaymentOrderItems = array();
         $ctr = $total_items = $total_discount = $total_tax = $shipping = 0;
@@ -1358,21 +1284,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
                         'amt' => round($values['line_subtotal'] / $qty, 2),
                         'number' => $sku,
                         'qty' => $qty,
-                        'taxamt' => '',
-                        'itemurl' => '',
-                        'itemcategory' => '',
-                        'itemweightvalue' => '',
-                        'itemweightunit' => '',
-                        'itemheightvalue' => '',
-                        'itemheightunit' => '',
-                        'itemwidthvalue' => '',
-                        'itemwidthunit' => '',
-                        'itemlengthvalue' => '',
-                        'itemlengthunit' => '',
-                        'ebayitemnumber' => '',
-                        'ebayitemauctiontxnid' => '',
-                        'ebayitemorderid' => '',
-                        'ebayitemcartid' => ''
                     );
                     array_push($PaymentOrderItems, $Item);
                     $ITEMAMT += $values['line_subtotal'];
@@ -1381,25 +1292,9 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
                 foreach (WC()->cart->get_fees() as $fee) {
                     $Item = array(
                         'name' => $fee->name,
-                        'desc' => '',
                         'amt' => number_format($fee->amount, 2, '.', ''),
                         'number' => $fee->id,
                         'qty' => 1,
-                        'taxamt' => '',
-                        'itemurl' => '',
-                        'itemcategory' => '',
-                        'itemweightvalue' => '',
-                        'itemweightunit' => '',
-                        'itemheightvalue' => '',
-                        'itemheightunit' => '',
-                        'itemwidthvalue' => '',
-                        'itemwidthunit' => '',
-                        'itemlengthvalue' => '',
-                        'itemlengthunit' => '',
-                        'ebayitemnumber' => '',
-                        'ebayitemauctiontxnid' => '',
-                        'ebayitemorderid' => '',
-                        'ebayitemcartid' => ''
                     );
                     array_push($PaymentOrderItems, $Item);
                     $ITEMAMT += $fee->amount * $Item['qty'];
@@ -1476,13 +1371,6 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         }
         $Payment['order_items'] = $PaymentOrderItems;
         array_push($Payments, $Payment);
-        $UserSelectedOptions = array(
-            'shippingcalculationmode' => '',
-            'insuranceoptionselected' => '',
-            'shippingoptionisdefault' => '',
-            'shippingoptionamount' => '',
-            'shippingoptionname' => '',
-        );
         $PayPalRequestData = array(
             'DECPFields' => $DECPFields,
             'Payments' => $Payments,
@@ -1673,20 +1561,10 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_PayPal_Express extends
         }
         $RTFields = array(
             'transactionid' => $order->get_transaction_id(),
-            'payerid' => '',
-            'invoiceid' => '',
             'refundtype' => $order->get_total() == $amount ? 'Full' : 'Partial',
             'amt' => number_format($amount, 2, '.', ''),
             'currencycode' => $order->get_order_currency(),
             'note' => $reason,
-            'retryuntil' => '',
-            'refundsource' => '',
-            'merchantstoredetail' => '',
-            'refundadvice' => '',
-            'refunditemdetails' => '',
-            'msgsubid' => '',
-            'storeid' => '',
-            'terminalid' => ''
         );
         $PayPalRequestData = array('RTFields' => $RTFields);
         $this->add_log('Refund Request: ' . print_r($PayPalRequestData, true));

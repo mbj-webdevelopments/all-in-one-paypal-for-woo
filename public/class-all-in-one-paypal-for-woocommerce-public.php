@@ -41,24 +41,6 @@ class All_In_One_Paypal_For_Woocommerce_Public {
         $this->version = $version;
     }
 
-    /**
-     * Register the stylesheets for the public-facing side of the site.
-     *
-     * @since    1.0.0
-     */
-    public function enqueue_styles() {
-        wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/all-in-one-paypal-for-woocommerce-public.css', array(), $this->version, 'all');
-    }
-
-    /**
-     * Register the stylesheets for the public-facing side of the site.
-     *
-     * @since    1.0.0
-     */
-    public function enqueue_scripts() {
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/all-in-one-paypal-for-woocommerce-public.js', array('jquery'), $this->version, false);
-    }
-
     public function all_in_one_paypal_for_woocommerce_paypal_digital_goods_paypal_return() {
         global $woocommerce, $wp;
         if (!isset($_GET['all_in_one_paypal_for_woocommerce_paypal_digital_goods'])) {

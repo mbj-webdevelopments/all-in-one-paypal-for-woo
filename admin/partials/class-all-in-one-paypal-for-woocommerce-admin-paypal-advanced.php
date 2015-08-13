@@ -171,7 +171,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                 'body' => $postData,
                 'timeout' => 70,
                 'sslverify' => false,
-                'user-agent' => 'Woocommerce ' . WC_VERSION,
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1',
                 'headers' => array('host' => 'www.paypal.com')
             ));
@@ -329,7 +329,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
                 'body' => $postData,
                 'timeout' => 70,
                 'sslverify' => false,
-                'user-agent' => 'WooCommerce ' . WC_VERSION,
+                'user-agent' => 'all-in-one-paypal-for-woo',
                 'httpversion' => '1.1',
                 'headers' => array('host' => 'www.paypal.com')
             ));
@@ -586,7 +586,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_PayPal_Advanced extends WC_Payment
             'body' => $postData,
             'timeout' => 70,
             'sslverify' => false,
-            'user-agent' => 'Woocommerce ' . WC_VERSION,
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1',
             'headers' => array('host' => 'www.paypal.com')
         ));

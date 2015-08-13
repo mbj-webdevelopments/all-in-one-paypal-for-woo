@@ -365,7 +365,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
             'body' => $post_data,
             'timeout' => 70,
             'sslverify' => false,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
         ));
         if (is_wp_error($response)) {
@@ -405,7 +405,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
             'body' => $post_data,
             'timeout' => 70,
             'sslverify' => false,
-            'user-agent' => 'WooCommerce',
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1'
         ));
         if (is_wp_error($response)) {
@@ -431,7 +431,7 @@ class All_In_One_Paypal_For_Woocommerce_Admin_WooCommerce_Pro_Hosted extends WC_
             'body' => $parameters,
             'timeout' => 70,
             'sslverify' => false,
-            'user-agent' => 'Woocommerce ' . WC_VERSION,
+            'user-agent' => 'all-in-one-paypal-for-woo',
             'httpversion' => '1.1',
             'headers' => array('host' => 'www.paypal.com')
         ));
